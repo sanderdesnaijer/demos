@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +8,8 @@
 
   <!-- Primary SEO -->
   <title>Demos — Sander de Snaijer</title>
-  <meta name="description" content="Small browser experiments and demos by Sander de Snaijer. No pipeline, no polish, just ideas running in a browser." />
+  <meta name="description"
+    content="Small browser experiments and demos by Sander de Snaijer. No pipeline, no polish, just ideas running in a browser." />
   <link rel="canonical" href="https://demos.sanderdesnaijer.com" />
   <meta name="robots" content="index, follow" />
 
@@ -24,11 +26,13 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Demos — Sander de Snaijer" />
-  <meta name="twitter:description" content="Small browser experiments and demos by Sander de Snaijer. No pipeline, no polish, just ideas running in a browser." />
+  <meta name="twitter:description"
+    content="Small browser experiments and demos by Sander de Snaijer. No pipeline, no polish, just ideas running in a browser." />
   <meta name="twitter:image" content="https://demos.sanderdesnaijer.com/img/og-image.webp" />
 
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
 
   <main class="page">
@@ -66,28 +70,33 @@
     <div class="card-grid">
 
       <!-- Card 1: MediaPipe face detection -->
-      <article class="card" onclick="window.location='demos/mediapipe-tutorial-demo.html'">
-        <div class="card-thumb card-thumb--mediapipe" role="img" aria-label="MediaPipe face detection thumbnail"></div>
+      <article class="card" onclick="window.location='demos/mediapipe-rainbow/index.html'">
+        <img class="card-thumb" src="img/mediapipe-demo.webp" alt="MediaPipe face and hand tracking demo — rainbow trails screenshot" />
         <div class="card-body">
           <time class="card-date">Mar 2026</time>
           <div class="card-badges">
             <span class="badge badge--type">demo</span>
           </div>
           <h2 class="card-title">
-            <a href="demos/mediapipe-tutorial-demo.html" id="card-mediapipe-link">MediaPipe face detection</a>
+            <a href="demos/mediapipe-rainbow/index.html" id="card-mediapipe-link">MediaPipe face detection &amp; hand tracking</a>
           </h2>
-          <p class="card-desc">Face landmark detection running live in the browser, no server needed.</p>
+          <p class="card-desc">Draw rainbow trails with your fingers, trigger face effects by opening your mouth. Hand
+            and face tracking live in the browser.</p>
           <div class="card-tags">
             <span class="tag">MediaPipe</span>
+            <span class="tag">Hand tracking</span>
+            <span class="tag">Face detection</span>
             <span class="tag">Webcam</span>
-            <span class="tag">JavaScript</span>
             <span class="tag">Canvas</span>
+            <span class="tag">JavaScript</span>
           </div>
         </div>
         <footer class="card-footer">
-          <a class="card-footer-link" href="demos/mediapipe-tutorial-demo.html" id="card-mediapipe-demo">open demo →</a>
+          <a class="card-footer-link" href="demos/mediapipe-rainbow/index.html" id="card-mediapipe-demo">open demo →</a>
           <div class="card-footer-divider" aria-hidden="true"></div>
-          <a class="card-footer-link card-footer-link--right" href="https://sanderdesnaijer.com/blog/mediapipe-face-detection" id="card-mediapipe-tutorial">read tutorial →</a>
+          <a class="card-footer-link card-footer-link--right"
+            href="https://sanderdesnaijer.com/blog/mediapipe-face-detection" id="card-mediapipe-tutorial">read tutorial
+            →</a>
         </footer>
       </article>
 
@@ -101,7 +110,8 @@
             <span class="badge badge--ext">play eyebrow tetris</span>
           </div>
           <h2 class="card-title">
-            <a href="https://eyebrow-tetris.sanderdesnaijer.com/" target="_blank" rel="noopener" id="card-tetris-link">Eyebrow Tetris</a>
+            <a href="https://eyebrow-tetris.sanderdesnaijer.com/" target="_blank" rel="noopener"
+              id="card-tetris-link">Eyebrow Tetris</a>
           </h2>
           <p class="card-desc">Face-controlled Tetris. Raise your eyebrows to rotate, open your mouth to drop.</p>
           <div class="card-tags">
@@ -111,7 +121,8 @@
           </div>
         </div>
         <footer class="card-footer">
-          <a class="card-footer-link" href="https://eyebrow-tetris.sanderdesnaijer.com/" target="_blank" rel="noopener" id="card-tetris-demo">open demo →</a>
+          <a class="card-footer-link" href="https://eyebrow-tetris.sanderdesnaijer.com/" target="_blank" rel="noopener"
+            id="card-tetris-demo">play eyebrow tetris →</a>
         </footer>
       </article>
 
@@ -135,7 +146,8 @@
           </div>
         </div>
         <footer class="card-footer">
-          <a class="card-footer-link" href="https://pugshunt.com/" target="_blank" rel="noopener" id="card-pugshunt-demo">open demo →</a>
+          <a class="card-footer-link" href="https://pugshunt.com/" target="_blank" rel="noopener"
+            id="card-pugshunt-demo">play pugs hunt →</a>
         </footer>
       </article>
 
@@ -147,8 +159,10 @@
   <footer class="site-footer">
     <span class="site-footer-domain">demos.sanderdesnaijer.com</span>
     <nav class="site-footer-links" aria-label="Footer links">
-      <a class="site-footer-link" href="https://github.com/sanderdesnaijer" target="_blank" rel="noopener" id="footer-github">GitHub</a>
-      <a class="site-footer-link" href="https://sanderdesnaijer.com" id="footer-main-site" style="display: flex; align-items: center; gap: 6px;">
+      <a class="site-footer-link" href="https://github.com/sanderdesnaijer" target="_blank" rel="noopener"
+        id="footer-github">GitHub</a>
+      <a class="site-footer-link" href="https://sanderdesnaijer.com" id="footer-main-site"
+        style="display: flex; align-items: center; gap: 6px;">
         <img src="img/logo-sanderdesnaijer.svg" alt="" class="site-logo" />
         <span>sanderdesnaijer.com</span>
       </a>
@@ -156,4 +170,5 @@
   </footer>
 
 </body>
+
 </html>

@@ -4,10 +4,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rainbow Magic Hands — MediaPipe Hand & Face Demo by Sander de Snaijer</title>
+  <title>Rainbow Magic Hands — MediaPipe Hand & Face Tracking Demo by Sander de Snaijer</title>
   <meta name="description"
-    content="A live browser demo using MediaPipe hand and face landmark detection. Draw rainbow trails with one finger, burst stars with two, and unlock MAGIC with your mouth." />
-  <link rel="canonical" href="https://demos.sanderdesnaijer.com/demos/mediapipe-tutorial-demo.html" />
+    content="Live browser demo using Google MediaPipe. Draw rainbow trails with one finger, burst stars with a peace sign, and trigger face effects by opening your mouth. No install needed." />
+  <meta name="keywords"
+    content="MediaPipe demo, hand tracking browser, face detection JavaScript, gesture recognition webcam, MediaPipe HandLandmarker, MediaPipe FaceLandmarker, rainbow drawing app, finger tracking browser, webcam gesture demo" />
+  <link rel="canonical" href="https://demos.sanderdesnaijer.com/demos/mediapipe-rainbow/index.html" />
   <meta name="robots" content="index, follow" />
   <link rel="icon" type="image/svg+xml" href="../img/logo-sanderdesnaijer.svg" />
 
@@ -16,7 +18,7 @@
   <meta property="og:title" content="Rainbow Magic Hands — MediaPipe Demo" />
   <meta property="og:description"
     content="Live browser demo: draw rainbow trails with your hand, burst stars, and trigger MAGIC with your mouth. Powered by MediaPipe." />
-  <meta property="og:url" content="https://demos.sanderdesnaijer.com/demos/mediapipe-tutorial-demo.html" />
+  <meta property="og:url" content="https://demos.sanderdesnaijer.com/demos/mediapipe-rainbow/index.html" />
   <meta property="og:image" content="https://demos.sanderdesnaijer.com/img/mediapipe-demo.webp" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
@@ -172,7 +174,10 @@
 
   <header>
     <div class="logo">✋ <span>Rainbow Magic</span></div>
-    <div class="pill" id="pill">● Loading…</div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="https://sanderdesnaijer.com/blog/mediapipe-face-detection" style="font-family:'Space Mono',monospace;font-size:0.68rem;color:#666;text-decoration:none;border:1px solid #333;padding:5px 14px;border-radius:999px;background:rgba(255,255,255,0.03);transition:color 0.2s,border-color 0.2s;" onmouseover="this.style.color='#aaa';this.style.borderColor='#555'" onmouseout="this.style.color='#666';this.style.borderColor='#333'">read tutorial →</a>
+      <div class="pill" id="pill">● Loading…</div>
+    </div>
   </header>
 
   <div class="stage" id="stage">
