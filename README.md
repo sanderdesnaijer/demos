@@ -20,7 +20,7 @@ No framework, no build step, no CMS. Just HTML, CSS and vanilla JavaScript deplo
 
 Zoom and pan maps with hand gestures. Make a fist to pan, spread two open hands to zoom. Powered by MediaPipe hand tracking, runs entirely in the browser. No backend, no touch, no mouse.
 
-- **Demo:** [sanderdesnaijer.github.io/map-gesture-controls](https://sanderdesnaijer.github.io/map-gesture-controls/)
+- **Demo:** [demo-basic.html](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-basic.html)
 - **Repo:** [github.com/sanderdesnaijer/map-gesture-controls](https://github.com/sanderdesnaijer/map-gesture-controls)
 - **Stack:** MediaPipe, OpenLayers, WebGL, TypeScript, Webcam
 
@@ -81,7 +81,7 @@ Deployed to GitHub Pages from the `main` branch. No build step needed, push and 
 ## Related
 
 - [sanderdesnaijer.com](https://sanderdesnaijer.com) — main site with projects and blog
-- [Map Gesture Controls](https://sanderdesnaijer.github.io/map-gesture-controls/) — OpenLayers + MediaPipe (GitHub Pages)
+- [Map Gesture Controls](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-basic.html) — OpenLayers + MediaPipe (GitHub Pages)
 - [eyebrow-tetris.sanderdesnaijer.com](https://eyebrow-tetris.sanderdesnaijer.com)
 - [pugshunt.com](https://pugshunt.com)
 
