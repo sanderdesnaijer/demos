@@ -177,17 +177,24 @@
   .copy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .copy-btn:disabled:hover { border-color: var(--border); color: var(--text); }
   .click-hint { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8rem; z-index: 5; pointer-events: none; }
-  .sidebar-toggle { display: none; }
+  .mobile-btn { display: none; }
+  .mobile-header { display: none; }
   @media (max-width: 768px) {
-    .header { padding: 0.75rem 1rem; }
-    .header-left h1 { font-size: 1rem; }
-    .header-left p { display: none; }
-    .layout { flex-direction: column; height: calc(100vh - 52px); position: relative; }
+    .header { display: none; }
+    .layout { flex-direction: column; height: 100vh; position: relative; }
     .cam-area { flex: 1; min-height: 0; }
-    .sidebar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; max-height: 55vh; border-left: none; border-top: 1px solid var(--border); z-index: 15; transform: translateY(100%); transition: transform 0.25s ease; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); }
+    .sidebar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; max-height: 55vh; border-left: none; border-top: 1px solid var(--border); z-index: 15; transform: translateY(100%); transition: transform 0.25s ease; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); overflow-y: auto; }
     .sidebar.open { transform: translateY(0); }
-    .sidebar-toggle { display: flex; position: absolute; bottom: 12px; right: 12px; z-index: 14; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; font-weight: 500; cursor: pointer; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-    .sidebar-toggle svg { width: 16px; height: 16px; }
+    .mobile-btn { display: flex; position: absolute; z-index: 16; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; font-weight: 500; cursor: pointer; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .mobile-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .sidebar-toggle { bottom: 12px; right: 12px; }
+    .header-toggle { top: 12px; right: 12px; }
+    .mobile-header { display: block; position: absolute; top: 0; left: 0; right: 0; z-index: 15; background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.25rem; transform: translateY(-100%); transition: transform 0.25s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .mobile-header.open { transform: translateY(0); }
+    .mobile-header h2 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
+    .mobile-header p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; }
+    .mobile-header-links { display: flex; gap: 8px; }
+    .mobile-header-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; border: 1px solid var(--border); padding: 5px 12px; border-radius: 999px; }
   }
 </style>
 
@@ -223,10 +230,22 @@
       </div>
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
-      <button class="sidebar-toggle" id="sidebarToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+      <button class="mobile-btn header-toggle" id="headerToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/><path d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101"/></svg>
+        <span>Links</span>
+      </button>
+      <button class="mobile-btn sidebar-toggle" id="sidebarToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
         <span>Controls</span>
       </button>
+      <div class="mobile-header" id="mobileHeader">
+        <h2>Face Mesh Landmark Explorer</h2>
+        <p>Hover to inspect, click to pin, search by index or region</p>
+        <div class="mobile-header-links">
+          <a href="https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks">read the guide</a>
+          <a href="https://demos.sanderdesnaijer.com">all demos</a>
+        </div>
+      </div>
     </div>
     <div class="sidebar" id="sidebar">
       <div class="sidebar-section">
@@ -318,16 +337,29 @@ ctx = canvasEl.getContext('2d');
 document.getElementById('startBtn').addEventListener('click', startCamera);
 document.getElementById('searchInput').addEventListener('input', onSearch);
 document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; });
-document.getElementById('wireframeToggle').addEventListener('change', e => { videoEl.style.opacity = e.target.checked ? '0' : '1'; });
+document.getElementById('wireframeToggle').addEventListener('change', e => {
+  const on = e.target.checked;
+  videoEl.style.opacity = on ? '0' : '1';
+  document.querySelector('.header').style.opacity = on ? '0' : '1';
+  document.querySelector('.header').style.pointerEvents = on ? 'none' : '';
+});
 
 const sidebarEl = document.getElementById('sidebar');
 const sidebarToggle = document.getElementById('sidebarToggle');
+const mobileHeader = document.getElementById('mobileHeader');
+const headerToggle = document.getElementById('headerToggle');
+
 sidebarToggle.addEventListener('click', () => {
+  mobileHeader.classList.remove('open');
   const isOpen = sidebarEl.classList.toggle('open');
-  sidebarToggle.querySelector('svg').innerHTML = isOpen
-    ? '<path d="M18 6L6 18M6 6l12 12"/>'
-    : '<path d="M12 3v18M3 12h18"/>';
   sidebarToggle.querySelector('span').textContent = isOpen ? 'Close' : 'Controls';
+});
+
+headerToggle.addEventListener('click', () => {
+  sidebarEl.classList.remove('open');
+  sidebarToggle.querySelector('span').textContent = 'Controls';
+  const isOpen = mobileHeader.classList.toggle('open');
+  headerToggle.querySelector('span').textContent = isOpen ? 'Close' : 'Links';
 });
 document.getElementById('copySelected').addEventListener('click', () => {
   if (pinnedIndices.size === 0) return;
