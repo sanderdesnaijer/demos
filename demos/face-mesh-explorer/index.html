@@ -455,29 +455,54 @@ async function startCamera() {
   statusBar.style.display = 'block';
   statusBar.textContent = 'Loading model...';
 
-  const vision = await FilesetResolver.forVisionTasks(
-    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm'
-  );
-  faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
-    baseOptions: {
-      modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
-      delegate: 'GPU'
-    },
-    runningMode: 'VIDEO',
-    numFaces: 1,
-    outputFaceBlendshapes: false
-  });
+  try {
+    const vision = await FilesetResolver.forVisionTasks(
+      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm'
+    );
+    faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+      baseOptions: {
+        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+        delegate: 'GPU'
+      },
+      runningMode: 'VIDEO',
+      numFaces: 1,
+      outputFaceBlendshapes: false
+    });
 
-  statusBar.textContent = 'Starting camera...';
-  const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
-  videoEl.srcObject = stream;
-  await new Promise(r => videoEl.onloadeddata = r);
-  canvasEl.width = videoEl.videoWidth;
-  canvasEl.height = videoEl.videoHeight;
-  statusBar.textContent = 'Detecting...';
-  setTimeout(() => { statusBar.style.display = 'none'; }, 2000);
-  document.getElementById('clickHint').style.display = 'block';
-  detect();
+    statusBar.textContent = 'Starting camera...';
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
+    videoEl.srcObject = stream;
+    await new Promise(r => videoEl.onloadeddata = r);
+    canvasEl.width = videoEl.videoWidth;
+    canvasEl.height = videoEl.videoHeight;
+    statusBar.textContent = 'Detecting...';
+    setTimeout(() => { statusBar.style.display = 'none'; }, 2000);
+    document.getElementById('clickHint').style.display = 'block';
+    detect();
+  } catch (err) {
+    statusBar.style.display = 'none';
+    const overlay = document.getElementById('startOverlay');
+    overlay.style.display = 'flex';
+    const isPermissionDenied = err.name === 'NotAllowedError' || err.message.includes('Permission denied');
+    const isIframe = window.self !== window.top;
+    if (isPermissionDenied && isIframe) {
+      overlay.innerHTML = `
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p style="font-size:1.1rem;max-width:340px;text-align:center;">Camera access is blocked inside this iframe</p>
+        <a href="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" target="_blank" rel="noopener" style="padding:10px 24px;border-radius:8px;background:#2563eb;color:#fff;font-weight:600;text-decoration:none;font-size:0.95rem;">Open full explorer</a>
+        <p style="font-size:0.75rem;opacity:0.6;max-width:300px;text-align:center;">The full version runs standalone with webcam access.</p>`;
+    } else if (isPermissionDenied) {
+      overlay.innerHTML = `
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="1.5"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p style="font-size:1.1rem;">Camera permission was denied</p>
+        <p style="font-size:0.8rem;opacity:0.7;max-width:300px;text-align:center;">Allow camera access in your browser settings and reload the page.</p>`;
+    } else {
+      overlay.innerHTML = `
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <p style="font-size:1rem;max-width:340px;text-align:center;">${err.message}</p>`;
+    }
+    console.error('Camera start failed:', err);
+  }
 }
 
 function detect() {
