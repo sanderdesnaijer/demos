@@ -112,7 +112,7 @@
       --dot-default: rgba(255,255,255,0.5);
     }
   }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; container-type: inline-size; }
   .header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
   .header-left h1 { font-size: 1.25rem; font-weight: 600; }
   .header-left p { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
@@ -179,7 +179,7 @@
   .click-hint { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8rem; z-index: 5; pointer-events: none; }
   .mobile-btn { display: none; }
   .mobile-header { display: none; }
-  @media (max-width: 960px) {
+  @container (max-width: 960px) {
     .header { display: none; }
     .layout { flex-direction: column; height: 100vh; position: relative; }
     .cam-area { flex: 1; min-height: 0; }
