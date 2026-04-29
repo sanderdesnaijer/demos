@@ -177,10 +177,17 @@
   .copy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
   .copy-btn:disabled:hover { border-color: var(--border); color: var(--text); }
   .click-hint { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8rem; z-index: 5; pointer-events: none; }
+  .sidebar-toggle { display: none; }
   @media (max-width: 768px) {
-    .layout { flex-direction: column; height: auto; }
-    .cam-area { height: 60vh; }
-    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+    .header { padding: 0.75rem 1rem; }
+    .header-left h1 { font-size: 1rem; }
+    .header-left p { display: none; }
+    .layout { flex-direction: column; height: calc(100vh - 52px); position: relative; }
+    .cam-area { flex: 1; min-height: 0; }
+    .sidebar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; max-height: 55vh; border-left: none; border-top: 1px solid var(--border); z-index: 15; transform: translateY(100%); transition: transform 0.25s ease; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); }
+    .sidebar.open { transform: translateY(0); }
+    .sidebar-toggle { display: flex; position: absolute; bottom: 12px; right: 12px; z-index: 14; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; font-weight: 500; cursor: pointer; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .sidebar-toggle svg { width: 16px; height: 16px; }
   }
 </style>
 
@@ -216,8 +223,12 @@
       </div>
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
+      <button class="sidebar-toggle" id="sidebarToggle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M3 12h18"/></svg>
+        <span>Controls</span>
+      </button>
     </div>
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
       <div class="sidebar-section">
         <h3>Search</h3>
         <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
@@ -308,6 +319,16 @@ document.getElementById('startBtn').addEventListener('click', startCamera);
 document.getElementById('searchInput').addEventListener('input', onSearch);
 document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; });
 document.getElementById('wireframeToggle').addEventListener('change', e => { videoEl.style.opacity = e.target.checked ? '0' : '1'; });
+
+const sidebarEl = document.getElementById('sidebar');
+const sidebarToggle = document.getElementById('sidebarToggle');
+sidebarToggle.addEventListener('click', () => {
+  const isOpen = sidebarEl.classList.toggle('open');
+  sidebarToggle.querySelector('svg').innerHTML = isOpen
+    ? '<path d="M18 6L6 18M6 6l12 12"/>'
+    : '<path d="M12 3v18M3 12h18"/>';
+  sidebarToggle.querySelector('span').textContent = isOpen ? 'Close' : 'Controls';
+});
 document.getElementById('copySelected').addEventListener('click', () => {
   if (pinnedIndices.size === 0) return;
   const indices = [...pinnedIndices].sort((a, b) => a - b);
