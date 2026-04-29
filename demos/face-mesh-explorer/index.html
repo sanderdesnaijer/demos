@@ -123,9 +123,15 @@
   .cam-area { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .cam-area video { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
   .cam-area canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); cursor: crosshair; }
-  .sidebar { width: 320px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
-  .sidebar-section { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
-  .sidebar-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 600; }
+  .sidebar { width: 260px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+  .sidebar-section { border-bottom: 1px solid var(--border); }
+  .sidebar-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .section-header:hover { background: var(--bg); }
+  .section-header .chevron { width: 14px; height: 14px; transition: transform 0.2s; color: var(--text-muted); flex-shrink: 0; }
+  .section-header .chevron.open { transform: rotate(180deg); }
+  .section-body { padding: 0 1rem 0.75rem; }
+  .section-body.collapsed { display: none; }
   .search-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; background: var(--bg); color: var(--text); outline: none; }
   .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
   .region-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -152,7 +158,7 @@
   .info-card { background: var(--bg); border-radius: 8px; padding: 1rem; }
   .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 2px; }
   .info-value { font-size: 1rem; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; }
-  .info-value.large { font-size: 2rem; }
+  .info-value.large { font-size: 1.5rem; }
   .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
   .info-header { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 16px; }
   .copy-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; transition: all 0.15s; font-family: 'SF Mono', 'Fira Code', monospace; }
@@ -188,13 +194,8 @@
     .mobile-btn { display: flex; position: absolute; z-index: 16; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; font-weight: 500; cursor: pointer; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
     .mobile-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
     .sidebar-toggle { bottom: 12px; right: 12px; }
-    .header-toggle { top: 12px; right: 12px; }
-    .mobile-header { display: block; position: absolute; top: 0; left: 0; right: 0; z-index: 15; background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.25rem; transform: translateY(-100%); transition: transform 0.25s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-    .mobile-header.open { transform: translateY(0); }
-    .mobile-header h2 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
-    .mobile-header p { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px; }
-    .mobile-header-links { display: flex; gap: 8px; }
-    .mobile-header-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; border: 1px solid var(--border); padding: 5px 12px; border-radius: 999px; }
+    .header-toggle { display: none; }
+    .mobile-header { display: none; }
   }
 </style>
 
@@ -248,59 +249,102 @@
       </div>
     </div>
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-section">
-        <h3>Search</h3>
-        <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
-      </div>
-      <div class="sidebar-section">
-        <h3>Regions</h3>
-        <div class="region-toggles" id="regionToggles">
-          <button class="region-btn active" data-region="all">All</button>
-          <button class="region-btn" data-region="eyes">Eyes</button>
-          <button class="region-btn" data-region="iris">Iris</button>
-          <button class="region-btn" data-region="eyebrows">Eyebrows</button>
-          <button class="region-btn" data-region="nose">Nose</button>
-          <button class="region-btn" data-region="mouth">Mouth</button>
-          <button class="region-btn" data-region="jaw">Jaw</button>
-          <button class="region-btn" data-region="cheeks">Cheeks</button>
-          <button class="region-btn" data-region="forehead">Forehead</button>
+      <div class="sidebar-section" data-section="search">
+        <div class="section-header" onclick="toggleSection('search')">
+          <h3>Search</h3>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </div>
-        <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
-        <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
-      </div>
-      <div class="sidebar-section" id="inspectorSection">
-        <h3>Inspector</h3>
-        <div class="info-card">
-          <div class="info-header">
-            <div>
-              <div class="info-label">Index</div>
-              <div class="info-value large" id="infoIndex">--</div>
-            </div>
-            <div>
-              <div class="info-label">Region</div>
-              <div class="info-value" id="infoRegion" style="font-size:1rem;">--</div>
-            </div>
-          </div>
-          <div class="info-grid">
-            <div><div class="info-label">X</div><div class="info-value" id="infoX">--</div></div>
-            <div><div class="info-label">Y</div><div class="info-value" id="infoY">--</div></div>
-            <div><div class="info-label">Z</div><div class="info-value" id="infoZ">--</div></div>
-          </div>
-          <div class="copy-actions" id="copyActions">
-            <button class="copy-btn" id="copySelected" disabled>Copy selected (0)</button>
-          </div>
-          <p class="hint">Tip: click any marker on the face to select it.</p>
+        <div class="section-body collapsed">
+          <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
         </div>
       </div>
-      <div class="sidebar-section">
-        <h3>Selected landmarks <span id="pinnedCount">(0)</span></h3>
-        <ul class="pinned-list" id="pinnedList">
-          <li style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">Click a marker on the face to select it</li>
-        </ul>
+      <div class="sidebar-section" data-section="regions">
+        <div class="section-header" onclick="toggleSection('regions')">
+          <h3>Regions</h3>
+          <svg class="chevron open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="section-body">
+          <div class="region-toggles" id="regionToggles">
+            <button class="region-btn active" data-region="all">All</button>
+            <button class="region-btn" data-region="eyes">Eyes</button>
+            <button class="region-btn" data-region="iris">Iris</button>
+            <button class="region-btn" data-region="eyebrows">Eyebrows</button>
+            <button class="region-btn" data-region="nose">Nose</button>
+            <button class="region-btn" data-region="mouth">Mouth</button>
+            <button class="region-btn" data-region="jaw">Jaw</button>
+            <button class="region-btn" data-region="cheeks">Cheeks</button>
+            <button class="region-btn" data-region="forehead">Forehead</button>
+          </div>
+          <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
+          <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
+        </div>
+      </div>
+      <div class="sidebar-section" data-section="inspector" id="inspectorSection">
+        <div class="section-header" onclick="toggleSection('inspector')">
+          <h3>Inspector</h3>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="section-body collapsed">
+          <div class="info-card">
+            <div class="info-header">
+              <div>
+                <div class="info-label">Index</div>
+                <div class="info-value large" id="infoIndex">--</div>
+              </div>
+              <div>
+                <div class="info-label">Region</div>
+                <div class="info-value" id="infoRegion" style="font-size:1rem;">--</div>
+              </div>
+            </div>
+            <div class="info-grid">
+              <div><div class="info-label">X</div><div class="info-value" id="infoX">--</div></div>
+              <div><div class="info-label">Y</div><div class="info-value" id="infoY">--</div></div>
+              <div><div class="info-label">Z</div><div class="info-value" id="infoZ">--</div></div>
+            </div>
+            <div class="copy-actions" id="copyActions">
+              <button class="copy-btn" id="copySelected" disabled>Copy selected (0)</button>
+            </div>
+            <p class="hint">Tip: click any marker on the face to select it.</p>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-section" data-section="selected">
+        <div class="section-header" onclick="toggleSection('selected')">
+          <h3>Selected landmarks <span id="pinnedCount">(0)</span></h3>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </div>
+        <div class="section-body collapsed">
+          <ul class="pinned-list" id="pinnedList">
+            <li style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">Click a marker on the face to select it</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 
+<script>
+function toggleSection(name) {
+  const sections = document.querySelectorAll('.sidebar-section');
+  sections.forEach(s => {
+    const body = s.querySelector('.section-body');
+    const chevron = s.querySelector('.chevron');
+    if (!body || !chevron) return;
+    if (s.dataset.section === name) {
+      const isCollapsed = body.classList.contains('collapsed');
+      if (isCollapsed) {
+        body.classList.remove('collapsed');
+        chevron.classList.add('open');
+      } else {
+        body.classList.add('collapsed');
+        chevron.classList.remove('open');
+      }
+    } else {
+      body.classList.add('collapsed');
+      chevron.classList.remove('open');
+    }
+  });
+}
+</script>
 <script type="module">
 import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
 
@@ -394,7 +438,7 @@ canvasEl.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hovere
 canvasEl.addEventListener('click', () => {
   if (hoveredIdx < 0) return;
   if (pinnedIndices.has(hoveredIdx)) pinnedIndices.delete(hoveredIdx);
-  else pinnedIndices.add(hoveredIdx);
+  else { pinnedIndices.add(hoveredIdx); toggleSection('selected'); }
   document.getElementById('clickHint').style.display = 'none';
   updatePinnedList();
 });
