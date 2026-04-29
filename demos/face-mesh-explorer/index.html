@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="../../img/logo-sanderdesnaijer.svg" />
+
+<!-- Primary SEO -->
+<title>MediaPipe Face Mesh Landmark Explorer - Interactive 478 Point Reference | Sander de Snaijer</title>
+<meta name="description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover, click, and copy landmark data in real time. No install needed, runs entirely in your browser.">
+<meta name="keywords" content="MediaPipe Face Mesh, landmark explorer, face landmark indices, 478 points, face detection JavaScript, gesture recognition, webcam face tracking, MediaPipe FaceLandmarker, face mesh index, landmark lookup tool">
+<link rel="canonical" href="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" />
+<meta name="robots" content="index, follow" />
+<meta name="author" content="Sander de Snaijer" />
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="Interactive Demos - Sander de Snaijer" />
+<meta property="og:title" content="MediaPipe Face Mesh Landmark Explorer - All 478 Points" />
+<meta property="og:description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover to inspect, click to pin, search by index or region." />
+<meta property="og:url" content="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" />
+<meta property="og:image" content="https://demos.sanderdesnaijer.com/img/mediapipe-face-mesh.webp" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="MediaPipe Face Mesh tracking 478 landmarks frozen mid-expression, showing numbered landmark points grouped by color per face region" />
+<meta property="og:type" content="website" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="MediaPipe Face Mesh Landmark Explorer - All 478 Points" />
+<meta name="twitter:description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices. Hover, click, copy. Runs entirely in your browser." />
+<meta name="twitter:image" content="https://demos.sanderdesnaijer.com/img/mediapipe-face-mesh.webp" />
+<meta name="twitter:image:alt" content="MediaPipe Face Mesh tracking 478 landmarks frozen mid-expression, showing numbered landmark points grouped by color per face region" />
+
+<!-- JSON-LD: WebApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MediaPipe Face Mesh Landmark Explorer",
+  "description": "Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices. Use your webcam to hover over any point on your face, see its index and region, and copy coordinates to your clipboard.",
+  "url": "https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "browserRequirements": "Requires a modern browser with WebGL and camera support",
+  "image": "https://demos.sanderdesnaijer.com/img/mediapipe-face-mesh.webp",
+  "screenshot": "https://demos.sanderdesnaijer.com/img/mediapipe-face-mesh.webp",
+  "author": {
+    "@type": "Person",
+    "name": "Sander de Snaijer",
+    "url": "https://sanderdesnaijer.com"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Explore all 478 MediaPipe Face Mesh landmark indices",
+    "Real-time webcam face tracking",
+    "Filter landmarks by face region",
+    "Search by index number or region name",
+    "Click to pin and copy landmark indices",
+    "Show mesh tessellation connections",
+    "Runs entirely in the browser with no backend"
+  ],
+  "keywords": "MediaPipe, Face Mesh, landmark index, face detection, webcam, JavaScript, computer vision"
+}
+</script>
+
+<!-- JSON-LD: BreadcrumbList -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Sander de Snaijer",
+      "item": "https://sanderdesnaijer.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Demos",
+      "item": "https://demos.sanderdesnaijer.com"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Face Mesh Landmark Explorer",
+      "item": "https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/"
+    }
+  ]
+}
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f8f9fa; --surface: #ffffff; --text: #1e293b; --text-muted: #64748b;
+    --border: #e2e8f0; --accent: #2563eb; --accent-light: #eff6ff;
+    --eye-color: #7c3aed; --mouth-color: #dc2626; --nose-color: #059669;
+    --brow-color: #d97706; --jaw-color: #0891b2; --cheek-color: #db2777;
+    --forehead-color: #4f46e5; --iris-color: #8b5cf6;
+    --dot-default: rgba(255,255,255,0.45); --dot-hover: #facc15;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f172a; --surface: #1e293b; --text: #e2e8f0; --text-muted: #94a3b8;
+      --border: #334155; --accent: #60a5fa; --accent-light: #1e3a5f;
+      --dot-default: rgba(255,255,255,0.5);
+    }
+  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  .header { padding: 1.5rem 2rem; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .header-left h1 { font-size: 1.25rem; font-weight: 600; }
+  .header-left p { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
+  .header-links { display: flex; align-items: center; gap: 12px; }
+  .header-link { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; border: 1px solid var(--border); padding: 5px 14px; border-radius: 999px; transition: color 0.15s, border-color 0.15s; white-space: nowrap; }
+  .header-link:hover { color: var(--text); border-color: var(--accent); }
+  .layout { display: flex; height: calc(100vh - 85px); }
+  .cam-area { flex: 1; position: relative; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .cam-area video { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+  .cam-area canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); cursor: crosshair; }
+  .sidebar { width: 320px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+  .sidebar-section { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); }
+  .sidebar-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem; font-weight: 600; }
+  .search-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; background: var(--bg); color: var(--text); outline: none; }
+  .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+  .region-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
+  .region-btn { padding: 4px 10px; border-radius: 999px; border: 1.5px solid; font-size: 0.75rem; font-weight: 500; cursor: pointer; background: transparent; transition: all 0.15s; }
+  .region-btn.active { color: #fff !important; }
+  .region-btn[data-region="eyes"] { border-color: var(--eye-color); color: var(--eye-color); }
+  .region-btn[data-region="eyes"].active { background: var(--eye-color); }
+  .region-btn[data-region="mouth"] { border-color: var(--mouth-color); color: var(--mouth-color); }
+  .region-btn[data-region="mouth"].active { background: var(--mouth-color); }
+  .region-btn[data-region="nose"] { border-color: var(--nose-color); color: var(--nose-color); }
+  .region-btn[data-region="nose"].active { background: var(--nose-color); }
+  .region-btn[data-region="eyebrows"] { border-color: var(--brow-color); color: var(--brow-color); }
+  .region-btn[data-region="eyebrows"].active { background: var(--brow-color); }
+  .region-btn[data-region="jaw"] { border-color: var(--jaw-color); color: var(--jaw-color); }
+  .region-btn[data-region="jaw"].active { background: var(--jaw-color); }
+  .region-btn[data-region="cheeks"] { border-color: var(--cheek-color); color: var(--cheek-color); }
+  .region-btn[data-region="cheeks"].active { background: var(--cheek-color); }
+  .region-btn[data-region="forehead"] { border-color: var(--forehead-color); color: var(--forehead-color); }
+  .region-btn[data-region="forehead"].active { background: var(--forehead-color); }
+  .region-btn[data-region="iris"] { border-color: var(--iris-color); color: var(--iris-color); }
+  .region-btn[data-region="iris"].active { background: var(--iris-color); }
+  .region-btn[data-region="all"] { border-color: var(--text-muted); color: var(--text-muted); }
+  .region-btn[data-region="all"].active { background: var(--text-muted); }
+  .info-card { background: var(--bg); border-radius: 8px; padding: 1rem; }
+  .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 2px; }
+  .info-value { font-size: 1rem; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; }
+  .info-value.large { font-size: 2rem; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .info-header { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 16px; }
+  .copy-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; transition: all 0.15s; font-family: 'SF Mono', 'Fira Code', monospace; }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: #16a34a; color: #16a34a; }
+  .copy-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pinned-list { list-style: none; }
+  .pinned-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .pinned-item .idx { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
+  .pinned-item .region-tag { font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; }
+  .pinned-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; }
+  .pinned-item button:hover { color: var(--mouth-color); }
+  .start-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); color: #fff; z-index: 10; gap: 1rem; }
+  .start-btn { padding: 12px 32px; border-radius: 8px; border: none; background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
+  .start-btn:hover { transform: scale(1.03); }
+  .start-btn:active { transform: scale(0.98); }
+  .status-bar { position: absolute; bottom: 12px; left: 12px; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.75rem; z-index: 5; }
+  .tooltip { position: absolute; pointer-events: none; background: rgba(0,0,0,0.8); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-family: 'SF Mono', 'Fira Code', monospace; z-index: 20; transform: translate(-50%, -120%); white-space: nowrap; }
+  .mesh-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; margin-top: 8px; }
+  .mesh-toggle input { accent-color: var(--accent); }
+  .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
+  .copy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .copy-btn:disabled:hover { border-color: var(--border); color: var(--text); }
+  .click-hint { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8rem; z-index: 5; pointer-events: none; }
+  @media (max-width: 768px) {
+    .layout { flex-direction: column; height: auto; }
+    .cam-area { height: 60vh; }
+    .sidebar { width: 100%; border-left: none; border-top: 1px solid var(--border); }
+  }
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_PLACEHOLDER"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_PLACEHOLDER');
+</script>
+</head>
+<body>
+  <div class="header">
+    <div class="header-left">
+      <h1>MediaPipe Face Mesh Landmark Explorer</h1>
+      <p>Hover to inspect, click to pin, search by index or region</p>
+    </div>
+    <div class="header-links">
+      <a class="header-link" href="https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks">read the guide</a>
+      <a class="header-link" href="https://demos.sanderdesnaijer.com">all demos</a>
+    </div>
+  </div>
+  <div class="layout">
+    <div class="cam-area">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas"></canvas>
+      <div id="tooltip" class="tooltip" style="display:none;"></div>
+      <div id="startOverlay" class="start-overlay">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+        <p style="font-size:1.1rem;">Enable your webcam to explore face mesh landmarks</p>
+        <button class="start-btn" id="startBtn">Start camera</button>
+        <p style="font-size:0.75rem;opacity:0.6;">Everything runs locally in your browser. No data is sent anywhere.</p>
+      </div>
+      <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
+      <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
+    </div>
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <h3>Search</h3>
+        <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
+      </div>
+      <div class="sidebar-section">
+        <h3>Regions</h3>
+        <div class="region-toggles" id="regionToggles">
+          <button class="region-btn active" data-region="all">All</button>
+          <button class="region-btn" data-region="eyes">Eyes</button>
+          <button class="region-btn" data-region="iris">Iris</button>
+          <button class="region-btn" data-region="eyebrows">Eyebrows</button>
+          <button class="region-btn" data-region="nose">Nose</button>
+          <button class="region-btn" data-region="mouth">Mouth</button>
+          <button class="region-btn" data-region="jaw">Jaw</button>
+          <button class="region-btn" data-region="cheeks">Cheeks</button>
+          <button class="region-btn" data-region="forehead">Forehead</button>
+        </div>
+        <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
+        <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
+      </div>
+      <div class="sidebar-section" id="inspectorSection">
+        <h3>Inspector</h3>
+        <div class="info-card">
+          <div class="info-header">
+            <div>
+              <div class="info-label">Index</div>
+              <div class="info-value large" id="infoIndex">--</div>
+            </div>
+            <div>
+              <div class="info-label">Region</div>
+              <div class="info-value" id="infoRegion" style="font-size:1rem;">--</div>
+            </div>
+          </div>
+          <div class="info-grid">
+            <div><div class="info-label">X</div><div class="info-value" id="infoX">--</div></div>
+            <div><div class="info-label">Y</div><div class="info-value" id="infoY">--</div></div>
+            <div><div class="info-label">Z</div><div class="info-value" id="infoZ">--</div></div>
+          </div>
+          <div class="copy-actions" id="copyActions">
+            <button class="copy-btn" id="copySelected" disabled>Copy selected (0)</button>
+          </div>
+          <p class="hint">Tip: click any marker on the face to select it.</p>
+        </div>
+      </div>
+      <div class="sidebar-section">
+        <h3>Selected landmarks <span id="pinnedCount">(0)</span></h3>
+        <ul class="pinned-list" id="pinnedList">
+          <li style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">Click a marker on the face to select it</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script type="module">
+import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
+
+const REGIONS = {
+  eyes: { indices: [33,7,163,144,145,153,154,155,133,246,161,160,159,158,157,173,263,249,390,373,374,380,381,382,362,466,388,387,386,385,384,398], color: '#ffffff', label: 'Eyes' },
+  iris: { indices: [468,469,470,471,472,473,474,475,476,477], color: '#FFFFFF', label: 'Iris' },
+  eyebrows: { indices: [70,63,105,66,107,55,65,52,53,46,300,293,334,296,336,285,295,282,283,276], color: '#d97706', label: 'Eyebrows' },
+  nose: { indices: [1,2,6,197,195,5,4,49,48,115,220,279,278,344,440,129,198,217,209,358,429,437,420], color: '#059669', label: 'Nose' },
+  mouth: { indices: [61,185,40,39,37,0,267,269,270,409,291,78,191,80,81,82,13,312,311,310,415,308,146,91,181,84,17,314,405,321,375,95,88,178,87,14,317,402,318,324], color: '#dc2626', label: 'Mouth' },
+  jaw: { indices: [389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162], color: '#0891b2', label: 'Jawline' },
+  cheeks: { indices: [36,205,206,207,187,123,116,117,118,119,100,47,266,425,426,427,411,352,345,346,347,348,329,277], color: '#db2777', label: 'Cheeks' },
+  forehead: { indices: [9,10,151,338,297,332,284,251,21,54,103,67,109], color: '#4f46e5', label: 'Forehead' }
+};
+
+const indexToRegion = {};
+for (const [key, val] of Object.entries(REGIONS)) {
+  for (const idx of val.indices) indexToRegion[idx] = { key, ...val };
+}
+
+let faceLandmarker, video, canvas, ctx, animId;
+let landmarks = null;
+let hoveredIdx = -1;
+let selectedIdx = -1;
+let pinnedIndices = new Set();
+let activeRegion = 'all';
+let searchHighlight = new Set();
+let showMesh = true;
+let mouseX = -1, mouseY = -1;
+
+const videoEl = document.getElementById('video');
+const canvasEl = document.getElementById('canvas');
+ctx = canvasEl.getContext('2d');
+
+document.getElementById('startBtn').addEventListener('click', startCamera);
+document.getElementById('searchInput').addEventListener('input', onSearch);
+document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; });
+document.getElementById('wireframeToggle').addEventListener('change', e => { videoEl.style.opacity = e.target.checked ? '0' : '1'; });
+document.getElementById('copySelected').addEventListener('click', () => {
+  if (pinnedIndices.size === 0) return;
+  const indices = [...pinnedIndices].sort((a, b) => a - b);
+  copyText(`[${indices.join(', ')}]`);
+});
+
+document.getElementById('regionToggles').addEventListener('click', e => {
+  const btn = e.target.closest('.region-btn');
+  if (!btn) return;
+  document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeRegion = btn.dataset.region;
+});
+
+canvasEl.addEventListener('mousemove', e => {
+  const rect = canvasEl.getBoundingClientRect();
+  if (!canvasEl.width || !canvasEl.height) return;
+  const scale = Math.max(rect.width / canvasEl.width, rect.height / canvasEl.height);
+  const displayedW = canvasEl.width * scale;
+  const displayedH = canvasEl.height * scale;
+  const offsetX = (rect.width - displayedW) / 2;
+  const offsetY = (rect.height - displayedH) / 2;
+  const cx = (e.clientX - rect.left - offsetX) / scale;
+  const cy = (e.clientY - rect.top - offsetY) / scale;
+  mouseX = 1 - (cx / canvasEl.width);
+  mouseY = cy / canvasEl.height;
+});
+
+canvasEl.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hoveredIdx = -1; hideTooltip(); });
+
+canvasEl.addEventListener('click', () => {
+  if (hoveredIdx < 0) return;
+  if (pinnedIndices.has(hoveredIdx)) pinnedIndices.delete(hoveredIdx);
+  else pinnedIndices.add(hoveredIdx);
+  document.getElementById('clickHint').style.display = 'none';
+  updatePinnedList();
+});
+
+function onSearch(e) {
+  const q = e.target.value.trim().toLowerCase();
+  searchHighlight.clear();
+  if (!q) return;
+  const num = parseInt(q);
+  if (!isNaN(num) && num >= 0 && num <= 477) { searchHighlight.add(num); return; }
+  for (const [key, val] of Object.entries(REGIONS)) {
+    if (key.includes(q) || val.label.toLowerCase().includes(q)) {
+      val.indices.forEach(i => searchHighlight.add(i));
+    }
+  }
+}
+
+function copyText(text) {
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btns = document.querySelectorAll('.copy-btn');
+    btns.forEach(b => { b.classList.add('copied'); setTimeout(() => b.classList.remove('copied'), 800); });
+  });
+}
+
+function updatePinnedList() {
+  const list = document.getElementById('pinnedList');
+  const count = document.getElementById('pinnedCount');
+  const copyBtn = document.getElementById('copySelected');
+  count.textContent = `(${pinnedIndices.size})`;
+  copyBtn.textContent = `Copy selected (${pinnedIndices.size})`;
+  copyBtn.disabled = pinnedIndices.size === 0;
+  if (pinnedIndices.size === 0) {
+    list.innerHTML = '<li style="color:var(--text-muted);font-size:0.85rem;padding:8px 0;">Click a marker on the face to select it</li>';
+    return;
+  }
+  list.innerHTML = '';
+  for (const idx of pinnedIndices) {
+    const region = indexToRegion[idx];
+    const li = document.createElement('li');
+    li.className = 'pinned-item';
+    li.innerHTML = `<span class="idx">#${idx}</span>
+      <span class="region-tag" style="background:${region ? region.color + '22' : 'var(--bg)'};color:${region ? region.color : 'var(--text-muted)'}">${region ? region.label : 'Mesh'}</span>
+      <button data-idx="${idx}">remove</button>`;
+    li.querySelector('button').addEventListener('click', () => { pinnedIndices.delete(idx); updatePinnedList(); });
+    list.appendChild(li);
+  }
+}
+
+function updateInspector(idx) {
+  const infoIndex = document.getElementById('infoIndex');
+  const infoRegion = document.getElementById('infoRegion');
+  const infoX = document.getElementById('infoX');
+  const infoY = document.getElementById('infoY');
+  const infoZ = document.getElementById('infoZ');
+  if (idx < 0 || !landmarks) {
+    infoIndex.textContent = '--';
+    infoRegion.textContent = '--';
+    infoX.textContent = '--';
+    infoY.textContent = '--';
+    infoZ.textContent = '--';
+    return;
+  }
+  const p = landmarks[idx];
+  const region = indexToRegion[idx];
+  infoIndex.textContent = idx;
+  infoRegion.textContent = region ? region.label : 'Mesh';
+  infoRegion.style.color = region ? region.color : 'var(--text-muted)';
+  infoX.textContent = p.x.toFixed(3);
+  infoY.textContent = p.y.toFixed(3);
+  infoZ.textContent = p.z.toFixed(3);
+}
+
+function showTooltip(idx, screenX, screenY) {
+  const tip = document.getElementById('tooltip');
+  const region = indexToRegion[idx];
+  tip.textContent = `#${idx}` + (region ? ` (${region.label})` : '');
+  tip.style.left = screenX + 'px';
+  tip.style.top = screenY + 'px';
+  tip.style.display = 'block';
+}
+
+function hideTooltip() {
+  document.getElementById('tooltip').style.display = 'none';
+}
+
+async function startCamera() {
+  document.getElementById('startOverlay').style.display = 'none';
+  const statusBar = document.getElementById('statusBar');
+  statusBar.style.display = 'block';
+  statusBar.textContent = 'Loading model...';
+
+  const vision = await FilesetResolver.forVisionTasks(
+    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm'
+  );
+  faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+    baseOptions: {
+      modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+      delegate: 'GPU'
+    },
+    runningMode: 'VIDEO',
+    numFaces: 1,
+    outputFaceBlendshapes: false
+  });
+
+  statusBar.textContent = 'Starting camera...';
+  const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720, facingMode: 'user' } });
+  videoEl.srcObject = stream;
+  await new Promise(r => videoEl.onloadeddata = r);
+  canvasEl.width = videoEl.videoWidth;
+  canvasEl.height = videoEl.videoHeight;
+  statusBar.textContent = 'Detecting...';
+  setTimeout(() => { statusBar.style.display = 'none'; }, 2000);
+  document.getElementById('clickHint').style.display = 'block';
+  detect();
+}
+
+function detect() {
+  const result = faceLandmarker.detectForVideo(videoEl, performance.now());
+  if (result.faceLandmarks.length > 0) {
+    landmarks = result.faceLandmarks[0];
+    draw();
+  }
+  animId = requestAnimationFrame(detect);
+}
+
+function draw() {
+  const w = canvasEl.width;
+  const h = canvasEl.height;
+  ctx.clearRect(0, 0, w, h);
+
+  if (!landmarks) return;
+
+  if (showMesh) {
+    const drawingUtils = new DrawingUtils(ctx);
+    drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: 'rgba(255,255,255,0.2)', lineWidth: 1 });
+  }
+
+  let closestIdx = -1;
+  let closestDist = 0.03;
+
+  for (let i = 0; i < landmarks.length; i++) {
+    const p = landmarks[i];
+    const region = indexToRegion[i];
+    const isInActiveRegion = activeRegion === 'all' || (region && region.key === activeRegion);
+    const isSearched = searchHighlight.size > 0 ? searchHighlight.has(i) : true;
+    const isPinned = pinnedIndices.has(i);
+
+    if (!isInActiveRegion && !isPinned) continue;
+
+    const x = p.x * w;
+    const y = p.y * h;
+
+    if (mouseX >= 0) {
+      const dx = p.x - mouseX;
+      const dy = p.y - mouseY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < closestDist) {
+        closestDist = dist;
+        closestIdx = i;
+      }
+    }
+
+    let radius = 2;
+    let color = 'rgba(255,255,255,0.3)';
+    let alpha = isSearched ? 1 : 0.15;
+
+    if (region) color = region.color;
+    if (isPinned) { radius = 5; alpha = 1; }
+
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  if (closestIdx >= 0) {
+    const p = landmarks[closestIdx];
+    const x = p.x * w;
+    const y = p.y * h;
+    ctx.globalAlpha = 1;
+
+    ctx.beginPath();
+    ctx.arc(x, y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(250,204,21,0.25)';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#facc15';
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px monospace';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.fillText(closestIdx, -x, y - 14);
+    ctx.restore();
+
+    const rect = canvasEl.getBoundingClientRect();
+    const scale = Math.max(rect.width / canvasEl.width, rect.height / canvasEl.height);
+    const offsetX = (rect.width - canvasEl.width * scale) / 2;
+    const offsetY = (rect.height - canvasEl.height * scale) / 2;
+    const screenX = offsetX + (1 - p.x) * canvasEl.width * scale;
+    const screenY = offsetY + p.y * canvasEl.height * scale;
+    showTooltip(closestIdx, screenX, screenY);
+  } else {
+    hideTooltip();
+  }
+
+  ctx.globalAlpha = 1;
+
+  for (const idx of pinnedIndices) {
+    if (idx >= landmarks.length) continue;
+    const p = landmarks[idx];
+    const x = p.x * w;
+    const y = p.y * h;
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.strokeStyle = '#facc15';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'center';
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.fillText(idx, -x, y - 16);
+    ctx.restore();
+  }
+
+  if (closestIdx !== hoveredIdx) {
+    hoveredIdx = closestIdx;
+    if (hoveredIdx >= 0) {
+      selectedIdx = hoveredIdx;
+      updateInspector(selectedIdx);
+    }
+  }
+}
+</script>
+</body>
+</html>

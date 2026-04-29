@@ -16,11 +16,19 @@ No framework, no build step, no CMS. Just HTML, CSS and vanilla JavaScript deplo
 
 ## Demos
 
+### Face Mesh Landmark Explorer
+
+Interactive reference for all 478 MediaPipe Face Mesh landmark indices. Hover over any point on your face to see its index, filter by region (eyes, mouth, nose, eyebrows, jaw, cheeks, forehead, iris), and copy coordinates to your clipboard. Built as a companion tool for the [Face Mesh Landmark Guide](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks).
+
+- **Demo:** [demos.sanderdesnaijer.com/demos/face-mesh-explorer/](https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/)
+- **Guide:** [sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks)
+- **Stack:** MediaPipe FaceLandmarker, HTML Canvas, Vanilla JavaScript, Webcam
+
 ### Map Gesture Controls
 
 Zoom and pan maps with hand gestures. Make a fist to pan, spread two open hands to zoom. Powered by MediaPipe hand tracking, runs entirely in the browser. No backend, no touch, no mouse.
 
-- **Demo:** [demo-basic.html](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-basic.html)
+- **Demo:** [demo-controls-overview.html](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html)
 - **Repo:** [github.com/sanderdesnaijer/map-gesture-controls](https://github.com/sanderdesnaijer/map-gesture-controls)
 - **Stack:** MediaPipe, OpenLayers, WebGL, TypeScript, Webcam
 
@@ -29,7 +37,7 @@ Zoom and pan maps with hand gestures. Make a fist to pan, spread two open hands 
 Hand tracking and face detection running live in the browser. Draw rainbow trails with one finger, burst stars with a peace sign, open your mouth to trigger the MAGIC effect.
 
 - **Demo:** [demos.sanderdesnaijer.com/demos/mediapipe-rainbow/](https://demos.sanderdesnaijer.com/demos/mediapipe-rainbow/)
-- **Tutorial:** [sanderdesnaijer.com/blog/mediapipe-hand-face-tracking-browser](https://sanderdesnaijer.com/blog/mediapipe-hand-face-tracking-browser)
+- **Tutorial:** [sanderdesnaijer.com/blog/mediapipe-hand-face-tracking](https://sanderdesnaijer.com/blog/mediapipe-hand-face-tracking)
 - **Stack:** MediaPipe Tasks Vision, HTML Canvas, Vanilla JavaScript
 
 ### Eyebrow Tetris
@@ -55,8 +63,10 @@ Duck Hunt with hand tracking. Your webcam hand replaces the lightgun.
 ├── index.html              # overview page
 ├── img/                    # shared images and og images
 └── demos/
+    ├── face-mesh-explorer/
+    │   └── index.html      # interactive landmark explorer
     └── mediapipe-rainbow/
-        └── index.html      # standalone demo page
+        └── index.html      # rainbow hand tracking demo
 ```
 
 Each new demo gets its own folder under `demos/` when it is hosted here. External projects (Map Gesture Controls on GitHub Pages, Eyebrow Tetris, Pug's Hunt) are listed on the overview but live at their own URLs.
@@ -80,8 +90,9 @@ Deployed to GitHub Pages from the `main` branch. No build step needed, push and 
 
 ## Related
 
-- [sanderdesnaijer.com](https://sanderdesnaijer.com) — main site with projects and blog
-- [Map Gesture Controls](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-basic.html) — OpenLayers + MediaPipe (GitHub Pages)
+- [sanderdesnaijer.com](https://sanderdesnaijer.com) -- main site with projects and blog
+- [Face Mesh Landmark Guide](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks) -- companion blog post for the explorer
+- [Map Gesture Controls](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html) -- OpenLayers + MediaPipe (GitHub Pages)
 - [eyebrow-tetris.sanderdesnaijer.com](https://eyebrow-tetris.sanderdesnaijer.com)
 - [pugshunt.com](https://pugshunt.com)
 
