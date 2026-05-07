@@ -186,6 +186,7 @@
   .start-btn:hover { transform: scale(1.03); }
   .start-btn:active { transform: scale(0.98); }
   .status-bar { position: absolute; bottom: 12px; left: 12px; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.75rem; z-index: 5; }
+  .freeze-badge { position: absolute; top: 12px; right: 12px; padding: 5px 12px; border-radius: 6px; background: rgba(220,38,38,0.85); color: #fff; font-size: 0.75rem; font-weight: 600; z-index: 5; display: none; letter-spacing: 0.05em; }
   .tooltip { position: absolute; pointer-events: none; background: rgba(0,0,0,0.8); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-family: 'SF Mono', 'Fira Code', monospace; z-index: 20; transform: translate(-50%, -120%); white-space: nowrap; }
   .mesh-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; margin-top: 8px; }
   .mesh-toggle input { accent-color: var(--accent); }
@@ -236,6 +237,7 @@
       </div>
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
+      <div id="freezeBadge" class="freeze-badge">FROZEN</div>
       <button class="sidebar-hide-btn" id="showSidebar" aria-expanded="false" aria-controls="sidebar">Controls</button>
     </div>
     <aside class="sidebar" id="sidebar" role="complementary" aria-label="Landmark controls">
@@ -260,6 +262,7 @@
           <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
           <label class="mesh-toggle"><input type="checkbox" id="labelsToggle" checked> Show index labels</label>
           <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
+          <label class="mesh-toggle"><input type="checkbox" id="freezeToggle"> Freeze frame <kbd style="font-size:0.65rem;padding:1px 4px;border:1px solid var(--border);border-radius:3px;margin-left:4px;color:var(--text-muted);">Space</kbd></label>
         </div>
       </div>
       <div class="sidebar-section" id="inspectorSection">
@@ -327,6 +330,8 @@ let searchHighlight = new Set();
 let showMesh = true;
 let showLabels = true;
 let mouseX = -1, mouseY = -1;
+let frozen = false;
+let frozenImageData = null;
 
 const videoEl = document.getElementById('video');
 const canvasEl = document.getElementById('canvas');
@@ -343,6 +348,41 @@ document.getElementById('wireframeToggle').addEventListener('change', e => {
 });
 document.getElementById('labelsToggle').addEventListener('change', e => {
   showLabels = e.target.checked;
+});
+
+const freezeToggle = document.getElementById('freezeToggle');
+const freezeBadge = document.getElementById('freezeBadge');
+function toggleFreeze() {
+  frozen = !frozen;
+  freezeToggle.checked = frozen;
+  freezeBadge.style.display = frozen ? 'block' : 'none';
+  if (frozen) {
+    // Capture the current video frame onto a hidden canvas for the frozen background
+    cancelAnimationFrame(animId);
+    frozenImageData = document.createElement('canvas');
+    frozenImageData.width = canvasEl.width;
+    frozenImageData.height = canvasEl.height;
+    const fCtx = frozenImageData.getContext('2d');
+    fCtx.save();
+    fCtx.translate(canvasEl.width, 0);
+    fCtx.scale(-1, 1);
+    fCtx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+    fCtx.restore();
+    videoEl.style.opacity = '0';
+    draw();
+  } else {
+    frozenImageData = null;
+    const isWireframe = document.getElementById('wireframeToggle').checked;
+    videoEl.style.opacity = isWireframe ? '0' : '1';
+    detect();
+  }
+}
+freezeToggle.addEventListener('change', toggleFreeze);
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && document.activeElement.tagName !== 'INPUT') {
+    e.preventDefault();
+    toggleFreeze();
+  }
 });
 
 const sidebarEl = document.getElementById('sidebar');
@@ -465,9 +505,10 @@ canvasEl.addEventListener('mousemove', e => {
   const cy = (e.clientY - rect.top - offsetY) / scale;
   mouseX = 1 - (cx / canvasEl.width);
   mouseY = cy / canvasEl.height;
+  if (frozen) draw();
 });
 
-canvasEl.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hoveredIdx = -1; hideTooltip(); });
+canvasEl.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hoveredIdx = -1; hideTooltip(); if (frozen) draw(); });
 
 canvasEl.addEventListener('click', () => {
   if (hoveredIdx < 0) return;
@@ -688,6 +729,13 @@ function draw() {
   const w = canvasEl.width;
   const h = canvasEl.height;
   ctx.clearRect(0, 0, w, h);
+
+  if (frozen && frozenImageData) {
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(frozenImageData, -w, 0, w, h);
+    ctx.restore();
+  }
 
   if (!landmarks) return;
 
