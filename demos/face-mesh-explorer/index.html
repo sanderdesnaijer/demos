@@ -100,9 +100,9 @@
   :root {
     --bg: #f8f9fa; --surface: #ffffff; --text: #1e293b; --text-muted: #64748b;
     --border: #e2e8f0; --accent: #2563eb; --accent-light: #eff6ff;
-    --eye-color: #7c3aed; --mouth-color: #dc2626; --nose-color: #059669;
+    --eye-color: #ffffff; --mouth-color: #dc2626; --nose-color: #059669;
     --brow-color: #d97706; --jaw-color: #0891b2; --cheek-color: #db2777;
-    --forehead-color: #4f46e5; --iris-color: #8b5cf6;
+    --forehead-color: #4f46e5; --iris-color: #b0b0b0;
     --dot-default: rgba(255,255,255,0.45); --dot-hover: #facc15;
   }
   @media (prefers-color-scheme: dark) {
@@ -147,6 +147,7 @@
   .theme-swatch input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
   .glow-controls { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
   .glow-slider { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-muted); }
+  .glow-slider span:last-child { min-width: 1.8em; text-align: right; }
   .glow-slider input[type="range"] { flex: 1; height: 4px; accent-color: var(--accent); }
   .theme-reset { margin-top: 8px; background: none; border: none; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
   .theme-reset:hover { color: var(--mouth-color); }
@@ -286,14 +287,14 @@
             <div class="glow-controls">
               <div class="glow-slider">
                 <span>Dot size</span>
-                <input type="range" id="dotSizeSlider" min="1" max="8" value="2" step="0.5">
-                <span id="dotSizeValue">2</span>
+                <input type="range" id="dotSizeSlider" min="1" max="8" value="3" step="0.5">
+                <span id="dotSizeValue">3</span>
               </div>
               <label class="mesh-toggle"><input type="checkbox" id="glowToggle"> Neon glow</label>
               <div class="glow-slider" id="glowSliderRow" style="display:none;">
                 <span>Intensity</span>
-                <input type="range" id="glowIntensity" min="4" max="40" value="12">
-                <span id="glowValue">12</span>
+                <input type="range" id="glowIntensity" min="4" max="40" value="14">
+                <span id="glowValue">14</span>
               </div>
             </div>
             <button class="theme-reset" id="themeReset">Reset to defaults</button>
@@ -341,7 +342,7 @@ import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdel
 
 const REGIONS = {
   eyes: { indices: [33,7,163,144,145,153,154,155,133,246,161,160,159,158,157,173,263,249,390,373,374,380,381,382,362,466,388,387,386,385,384,398], color: '#ffffff', label: 'Eyes' },
-  iris: { indices: [468,469,470,471,472,473,474,475,476,477], color: '#FFFFFF', label: 'Iris' },
+  iris: { indices: [468,469,470,471,472,473,474,475,476,477], color: '#b0b0b0', label: 'Iris' },
   eyebrows: { indices: [70,63,105,66,107,55,65,52,53,46,300,293,334,296,336,285,295,282,283,276], color: '#d97706', label: 'Eyebrows' },
   nose: { indices: [1,2,4,5,6,19,45,48,64,94,97,98,115,168,195,197,220,275,278,294,326,327,344,440], color: '#059669', label: 'Nose' },
   mouth: { indices: [61,185,40,39,37,0,267,269,270,409,291,78,191,80,81,82,13,312,311,310,415,308,146,91,181,84,17,314,405,321,375,95,88,178,87,14,317,402,318,324], color: '#dc2626', label: 'Mouth' },
@@ -442,8 +443,8 @@ const CSS_VAR_MAP = {
 };
 
 let glowEnabled = false;
-let glowIntensity = 12;
-let dotSize = 2;
+let glowIntensity = 14;
+let dotSize = 3;
 
 function applyRegionColor(key, color) {
   REGIONS[key].color = color;
@@ -451,12 +452,16 @@ function applyRegionColor(key, color) {
   if (CSS_VAR_MAP[key]) document.documentElement.style.setProperty(CSS_VAR_MAP[key], color);
 }
 
+let _saveTimer;
 function saveTheme() {
-  const colors = {};
-  for (const key of Object.keys(REGIONS)) colors[key] = REGIONS[key].color;
-  try {
-    localStorage.setItem(THEME_KEY, JSON.stringify({ colors, glow: glowEnabled, glowIntensity, dotSize }));
-  } catch {}
+  clearTimeout(_saveTimer);
+  _saveTimer = setTimeout(() => {
+    const colors = {};
+    for (const key of Object.keys(REGIONS)) colors[key] = REGIONS[key].color;
+    try {
+      localStorage.setItem(THEME_KEY, JSON.stringify({ colors, glow: glowEnabled, glowIntensity, dotSize }));
+    } catch {}
+  }, 300);
 }
 
 function loadTheme() {
@@ -545,14 +550,14 @@ document.getElementById('themeReset').addEventListener('click', () => {
     applyRegionColor(key, color);
   }
   glowEnabled = false;
-  glowIntensity = 12;
-  dotSize = 2;
+  glowIntensity = 14;
+  dotSize = 3;
   document.getElementById('glowToggle').checked = false;
-  document.getElementById('glowIntensity').value = 12;
-  document.getElementById('glowValue').textContent = '12';
+  document.getElementById('glowIntensity').value = 14;
+  document.getElementById('glowValue').textContent = '14';
   document.getElementById('glowSliderRow').style.display = 'none';
-  document.getElementById('dotSizeSlider').value = 2;
-  document.getElementById('dotSizeValue').textContent = '2';
+  document.getElementById('dotSizeSlider').value = 3;
+  document.getElementById('dotSizeValue').textContent = '3';
   themeGrid.querySelectorAll('input[type="color"]').forEach(input => {
     input.value = DEFAULT_COLORS[input.dataset.region];
   });
