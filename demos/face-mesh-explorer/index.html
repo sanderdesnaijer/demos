@@ -339,15 +339,20 @@ ctx = canvasEl.getContext('2d');
 
 document.getElementById('startBtn').addEventListener('click', startCamera);
 document.getElementById('searchInput').addEventListener('input', onSearch);
-document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; });
+document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; if (frozen) draw(); });
 document.getElementById('wireframeToggle').addEventListener('change', e => {
   const on = e.target.checked;
-  videoEl.style.opacity = on ? '0' : '1';
+  if (!frozen) videoEl.style.opacity = on ? '0' : '1';
   document.querySelector('.header').style.opacity = on ? '0' : '1';
   document.querySelector('.header').style.pointerEvents = on ? 'none' : '';
+  if (frozen) {
+    if (on) frozenImageData = null;
+    draw();
+  }
 });
 document.getElementById('labelsToggle').addEventListener('change', e => {
   showLabels = e.target.checked;
+  if (frozen) draw();
 });
 
 const freezeToggle = document.getElementById('freezeToggle');
@@ -357,17 +362,22 @@ function toggleFreeze() {
   freezeToggle.checked = frozen;
   freezeBadge.style.display = frozen ? 'block' : 'none';
   if (frozen) {
-    // Capture the current video frame onto a hidden canvas for the frozen background
     cancelAnimationFrame(animId);
-    frozenImageData = document.createElement('canvas');
-    frozenImageData.width = canvasEl.width;
-    frozenImageData.height = canvasEl.height;
-    const fCtx = frozenImageData.getContext('2d');
-    fCtx.save();
-    fCtx.translate(canvasEl.width, 0);
-    fCtx.scale(-1, 1);
-    fCtx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
-    fCtx.restore();
+    const isWireframe = document.getElementById('wireframeToggle').checked;
+    if (isWireframe) {
+      frozenImageData = null;
+    } else {
+      // Capture the current video frame for the frozen background
+      frozenImageData = document.createElement('canvas');
+      frozenImageData.width = canvasEl.width;
+      frozenImageData.height = canvasEl.height;
+      const fCtx = frozenImageData.getContext('2d');
+      fCtx.save();
+      fCtx.translate(canvasEl.width, 0);
+      fCtx.scale(-1, 1);
+      fCtx.drawImage(videoEl, 0, 0, canvasEl.width, canvasEl.height);
+      fCtx.restore();
+    }
     videoEl.style.opacity = '0';
     draw();
   } else {
@@ -464,6 +474,7 @@ selectRegionBtn.addEventListener('click', () => {
   }
   updatePinnedList();
   updateSelectRegionBtn();
+  if (frozen) draw();
 });
 
 document.getElementById('regionToggles').addEventListener('click', e => {
@@ -491,6 +502,7 @@ document.getElementById('regionToggles').addEventListener('click', e => {
     syncAllBtn();
   }
   updateSelectRegionBtn();
+  if (frozen) draw();
 });
 
 canvasEl.addEventListener('mousemove', e => {
@@ -516,6 +528,7 @@ canvasEl.addEventListener('click', () => {
   else { pinnedIndices.add(hoveredIdx); }
   document.getElementById('clickHint').style.display = 'none';
   updatePinnedList();
+  if (frozen) draw();
 });
 
 let preSearchRegions = null;
@@ -594,6 +607,7 @@ function onSearch(e) {
     feedback.innerHTML = 'No matching regions or indices';
     feedback.style.display = 'block';
   }
+  if (frozen) draw();
 }
 
 
