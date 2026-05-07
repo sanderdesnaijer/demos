@@ -136,6 +136,20 @@
   .search-select-btn { background: none; border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; padding: 1px 8px; border-radius: 4px; cursor: pointer; margin-left: 6px; }
   .search-select-btn:hover { background: var(--accent); color: #fff; }
   .search-select-btn.done { border-color: #16a34a; color: #16a34a; pointer-events: none; }
+  .theme-toggle-btn { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 3px 7px; cursor: pointer; color: var(--text-muted); font-size: 0.85rem; line-height: 1; transition: color 0.15s, border-color 0.15s; }
+  .theme-toggle-btn:hover, .theme-toggle-btn.active { color: var(--accent); border-color: var(--accent); }
+  .theme-panel { display: none; margin-top: 10px; padding: 10px; background: var(--bg); border-radius: 8px; }
+  .theme-panel.open { display: block; }
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .theme-swatch { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--text-muted); }
+  .theme-swatch input[type="color"] { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border: 1px solid var(--border); border-radius: 4px; padding: 0; cursor: pointer; background: transparent; }
+  .theme-swatch input[type="color"]::-webkit-color-swatch-wrapper { padding: 1px; }
+  .theme-swatch input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+  .glow-controls { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .glow-slider { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: var(--text-muted); }
+  .glow-slider input[type="range"] { flex: 1; height: 4px; accent-color: var(--accent); }
+  .theme-reset { margin-top: 8px; background: none; border: none; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+  .theme-reset:hover { color: var(--mouth-color); }
   .region-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
   .region-btn { padding: 4px 10px; border-radius: 999px; border: 1.5px solid; font-size: 0.75rem; font-weight: 500; cursor: pointer; background: transparent; transition: all 0.15s; }
   .region-btn.active { color: #fff !important; }
@@ -263,6 +277,27 @@
           <label class="mesh-toggle"><input type="checkbox" id="labelsToggle" checked> Show index labels</label>
           <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
           <label class="mesh-toggle"><input type="checkbox" id="freezeToggle"> Freeze frame <kbd style="font-size:0.65rem;padding:1px 4px;border:1px solid var(--border);border-radius:3px;margin-left:4px;color:var(--text-muted);">Space</kbd></label>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;">
+            <span style="font-size:0.75rem;color:var(--text-muted);">Theme</span>
+            <button class="theme-toggle-btn" id="themeToggleBtn" title="Customize region colors">&#x1f3a8;</button>
+          </div>
+          <div class="theme-panel" id="themePanel">
+            <div class="theme-grid" id="themeGrid"></div>
+            <div class="glow-controls">
+              <div class="glow-slider">
+                <span>Dot size</span>
+                <input type="range" id="dotSizeSlider" min="1" max="8" value="2" step="0.5">
+                <span id="dotSizeValue">2</span>
+              </div>
+              <label class="mesh-toggle"><input type="checkbox" id="glowToggle"> Neon glow</label>
+              <div class="glow-slider" id="glowSliderRow" style="display:none;">
+                <span>Intensity</span>
+                <input type="range" id="glowIntensity" min="4" max="40" value="12">
+                <span id="glowValue">12</span>
+              </div>
+            </div>
+            <button class="theme-reset" id="themeReset">Reset to defaults</button>
+          </div>
         </div>
       </div>
       <div class="sidebar-section" id="inspectorSection">
@@ -394,6 +429,139 @@ document.addEventListener('keydown', e => {
     toggleFreeze();
   }
 });
+
+// ---- Theme / color customization ----
+const THEME_KEY = 'fme-theme';
+const DEFAULT_COLORS = {};
+for (const [key, val] of Object.entries(REGIONS)) DEFAULT_COLORS[key] = val.color;
+
+const CSS_VAR_MAP = {
+  eyes: '--eye-color', iris: '--iris-color', eyebrows: '--brow-color',
+  nose: '--nose-color', mouth: '--mouth-color', jaw: '--jaw-color',
+  cheeks: '--cheek-color', forehead: '--forehead-color'
+};
+
+let glowEnabled = false;
+let glowIntensity = 12;
+let dotSize = 2;
+
+function applyRegionColor(key, color) {
+  REGIONS[key].color = color;
+  for (const idx of REGIONS[key].indices) indexToRegion[idx].color = color;
+  if (CSS_VAR_MAP[key]) document.documentElement.style.setProperty(CSS_VAR_MAP[key], color);
+}
+
+function saveTheme() {
+  const colors = {};
+  for (const key of Object.keys(REGIONS)) colors[key] = REGIONS[key].color;
+  try {
+    localStorage.setItem(THEME_KEY, JSON.stringify({ colors, glow: glowEnabled, glowIntensity, dotSize }));
+  } catch {}
+}
+
+function loadTheme() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(THEME_KEY));
+    if (!saved) return;
+    if (saved.colors) {
+      for (const [key, color] of Object.entries(saved.colors)) {
+        if (REGIONS[key]) applyRegionColor(key, color);
+      }
+    }
+    if (saved.glow !== undefined) {
+      glowEnabled = saved.glow;
+      document.getElementById('glowToggle').checked = glowEnabled;
+      document.getElementById('glowSliderRow').style.display = glowEnabled ? 'flex' : 'none';
+    }
+    if (saved.glowIntensity !== undefined) {
+      glowIntensity = saved.glowIntensity;
+      document.getElementById('glowIntensity').value = glowIntensity;
+      document.getElementById('glowValue').textContent = glowIntensity;
+    }
+    if (saved.dotSize !== undefined) {
+      dotSize = saved.dotSize;
+      document.getElementById('dotSizeSlider').value = dotSize;
+      document.getElementById('dotSizeValue').textContent = dotSize;
+    }
+  } catch {}
+}
+
+// Build color swatches
+const themeGrid = document.getElementById('themeGrid');
+for (const [key, val] of Object.entries(REGIONS)) {
+  const div = document.createElement('div');
+  div.className = 'theme-swatch';
+  const input = document.createElement('input');
+  input.type = 'color';
+  input.value = val.color;
+  input.dataset.region = key;
+  input.addEventListener('input', e => {
+    applyRegionColor(key, e.target.value);
+    saveTheme();
+    if (frozen) draw();
+  });
+  div.appendChild(input);
+  div.appendChild(document.createTextNode(val.label));
+  themeGrid.appendChild(div);
+}
+
+// Theme panel toggle
+document.getElementById('themeToggleBtn').addEventListener('click', () => {
+  const panel = document.getElementById('themePanel');
+  const btn = document.getElementById('themeToggleBtn');
+  panel.classList.toggle('open');
+  btn.classList.toggle('active');
+  // Sync swatch values with current colors
+  panel.querySelectorAll('input[type="color"]').forEach(input => {
+    input.value = REGIONS[input.dataset.region].color;
+  });
+});
+
+// Glow toggle
+document.getElementById('glowToggle').addEventListener('change', e => {
+  glowEnabled = e.target.checked;
+  document.getElementById('glowSliderRow').style.display = glowEnabled ? 'flex' : 'none';
+  saveTheme();
+  if (frozen) draw();
+});
+
+document.getElementById('glowIntensity').addEventListener('input', e => {
+  glowIntensity = parseInt(e.target.value);
+  document.getElementById('glowValue').textContent = glowIntensity;
+  saveTheme();
+  if (frozen) draw();
+});
+
+document.getElementById('dotSizeSlider').addEventListener('input', e => {
+  dotSize = parseFloat(e.target.value);
+  document.getElementById('dotSizeValue').textContent = dotSize;
+  saveTheme();
+  if (frozen) draw();
+});
+
+// Reset
+document.getElementById('themeReset').addEventListener('click', () => {
+  for (const [key, color] of Object.entries(DEFAULT_COLORS)) {
+    applyRegionColor(key, color);
+  }
+  glowEnabled = false;
+  glowIntensity = 12;
+  dotSize = 2;
+  document.getElementById('glowToggle').checked = false;
+  document.getElementById('glowIntensity').value = 12;
+  document.getElementById('glowValue').textContent = '12';
+  document.getElementById('glowSliderRow').style.display = 'none';
+  document.getElementById('dotSizeSlider').value = 2;
+  document.getElementById('dotSizeValue').textContent = '2';
+  themeGrid.querySelectorAll('input[type="color"]').forEach(input => {
+    input.value = DEFAULT_COLORS[input.dataset.region];
+  });
+  try { localStorage.removeItem(THEME_KEY); } catch {}
+  if (frozen) draw();
+});
+
+loadTheme();
+// ---- End theme ----
 
 const sidebarEl = document.getElementById('sidebar');
 const showSidebarBtn = document.getElementById('showSidebar');
@@ -794,19 +962,41 @@ function draw() {
     const x = p.x * w;
     const y = p.y * h;
 
-    let radius = 2;
+    let radius = dotSize;
     let color = 'rgba(255,255,255,0.3)';
     let alpha = isSearched ? 1 : 0.15;
 
     if (region) color = region.color;
-    if (isInHoveredRegion && !isInActiveRegion) { alpha = 0.85; radius = 3; }
-    if (isPinned) { radius = 5; alpha = 1; }
+    if (isInHoveredRegion && !isInActiveRegion) { alpha = 0.85; radius = dotSize * 1.5; }
+    if (isPinned) { radius = dotSize * 2.5; alpha = 1; }
 
     ctx.globalAlpha = alpha;
+
+    if (glowEnabled) {
+      // Draw a larger soft glow pass first
+      ctx.shadowColor = 'transparent';
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.arc(x, y, radius + glowIntensity * 0.4, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = alpha * 0.1;
+      ctx.fill();
+      // Medium glow
+      ctx.beginPath();
+      ctx.arc(x, y, radius + glowIntensity * 0.2, 0, Math.PI * 2);
+      ctx.globalAlpha = alpha * 0.2;
+      ctx.fill();
+      ctx.globalAlpha = alpha;
+      ctx.shadowColor = color;
+      ctx.shadowBlur = glowIntensity;
+    }
+
     ctx.beginPath();
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
+
+    if (glowEnabled) { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; }
   }
 
   if (closestIdx >= 0) {
@@ -853,11 +1043,13 @@ function draw() {
     const p = landmarks[idx];
     const x = p.x * w;
     const y = p.y * h;
+    if (glowEnabled) { ctx.shadowColor = '#facc15'; ctx.shadowBlur = glowIntensity; }
     ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.arc(x, y, dotSize * 3, 0, Math.PI * 2);
     ctx.strokeStyle = '#facc15';
     ctx.lineWidth = 2;
     ctx.stroke();
+    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
     if (showLabels) {
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 12px monospace';
