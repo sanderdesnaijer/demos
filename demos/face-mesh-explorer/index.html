@@ -7,7 +7,7 @@
 
 <!-- Primary SEO -->
 <title>MediaPipe Face Mesh Explorer - 478 Point Demo</title>
-<meta name="description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover, click, and copy landmark data in real time. No install needed, runs entirely in your browser.">
+<meta name="description" content="Explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover, click, and copy landmark data in real time. Runs in your browser.">
 <meta name="keywords" content="MediaPipe Face Mesh, landmark explorer, face landmark indices, 478 points, face detection JavaScript, gesture recognition, webcam face tracking, MediaPipe FaceLandmarker, face mesh index, landmark lookup tool">
 <link rel="canonical" href="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" />
 <meta name="robots" content="index, follow" />
@@ -126,7 +126,7 @@
   .cam-area canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); cursor: crosshair; }
   .sidebar { width: 260px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
   .sidebar-section { border-bottom: 1px solid var(--border); }
-  .sidebar-section h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; padding: 0.6rem 1rem 0; }
+  .sidebar-section h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; padding: 0.6rem 1rem 0; }
   .section-body { padding: 0.4rem 1rem 0.75rem; }
   .search-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; background: var(--bg); color: var(--text); outline: none; }
   .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
@@ -199,7 +199,7 @@
     .header { display: none; }
     .layout { height: 100vh; }
     .sidebar { width: 200px; }
-    #inspectorSection > h3 { display: none; }
+    #inspectorSection > h2 { display: none; }
     .info-card { display: none; }
   }
 </style>
@@ -213,7 +213,7 @@
 </script>
 </head>
 <body>
-  <div class="header">
+  <header class="header">
     <div class="header-left">
       <h1>MediaPipe Face Mesh Landmark Explorer</h1>
       <p>Hover to inspect, click to pin, search by index or region</p>
@@ -222,8 +222,8 @@
       <a class="header-link" href="https://www.sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks">read the guide</a>
       <a class="header-link" href="https://demos.sanderdesnaijer.com">all demos</a>
     </div>
-  </div>
-  <div class="layout">
+  </header>
+  <main class="layout">
     <div class="cam-area">
       <video id="video" autoplay playsinline></video>
       <canvas id="canvas"></canvas>
@@ -236,25 +236,25 @@
       </div>
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
-      <button class="sidebar-hide-btn" id="showSidebar">Controls</button>
+      <button class="sidebar-hide-btn" id="showSidebar" aria-expanded="false" aria-controls="sidebar">Controls</button>
     </div>
-    <div class="sidebar" id="sidebar">
-      <button id="hideSidebar" style="width:100%;padding:6px;border:none;border-bottom:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:0.7rem;cursor:pointer;text-align:center;">Hide controls</button>
+    <aside class="sidebar" id="sidebar" role="complementary" aria-label="Landmark controls">
+      <button id="hideSidebar" aria-expanded="true" aria-controls="sidebar" style="width:100%;padding:6px;border:none;border-bottom:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:0.7rem;cursor:pointer;text-align:center;">Hide controls</button>
       <div class="sidebar-section">
-        <h3>Filter</h3>
+        <h2>Filter</h2>
         <div class="section-body">
-          <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
+          <input type="text" class="search-input" id="searchInput" aria-label="Search landmarks by index or region" placeholder="Type index (33) or region (eye)...">
           <div id="searchFeedback" class="search-feedback" style="display:none;"></div>
           <div class="region-toggles" id="regionToggles" style="margin-top:10px;">
-            <button class="region-btn" data-region="all">All</button>
-            <button class="region-btn" data-region="eyes">Eyes</button>
-            <button class="region-btn" data-region="iris">Iris</button>
-            <button class="region-btn" data-region="eyebrows">Eyebrows</button>
-            <button class="region-btn" data-region="nose">Nose</button>
-            <button class="region-btn" data-region="mouth">Mouth</button>
-            <button class="region-btn" data-region="jaw">Jaw</button>
-            <button class="region-btn" data-region="cheeks">Cheeks</button>
-            <button class="region-btn" data-region="forehead">Forehead</button>
+            <button class="region-btn" data-region="all" aria-pressed="false">All</button>
+            <button class="region-btn" data-region="eyes" aria-pressed="false">Eyes</button>
+            <button class="region-btn" data-region="iris" aria-pressed="false">Iris</button>
+            <button class="region-btn" data-region="eyebrows" aria-pressed="false">Eyebrows</button>
+            <button class="region-btn" data-region="nose" aria-pressed="false">Nose</button>
+            <button class="region-btn" data-region="mouth" aria-pressed="false">Mouth</button>
+            <button class="region-btn" data-region="jaw" aria-pressed="false">Jaw</button>
+            <button class="region-btn" data-region="cheeks" aria-pressed="false">Cheeks</button>
+            <button class="region-btn" data-region="forehead" aria-pressed="false">Forehead</button>
           </div>
           <button class="select-region-btn" id="selectRegionBtn"></button>
           <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
@@ -263,7 +263,7 @@
         </div>
       </div>
       <div class="sidebar-section" id="inspectorSection">
-        <h3>Inspector <span id="pinnedCount" style="font-weight:400;"></span></h3>
+        <h2>Inspector <span id="pinnedCount" style="font-weight:400;"></span></h2>
         <div class="section-body">
           <div class="info-card">
             <div class="info-header">
@@ -295,8 +295,8 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
+    </aside>
+  </main>
 
 <script type="module">
 import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
@@ -305,11 +305,11 @@ const REGIONS = {
   eyes: { indices: [33,7,163,144,145,153,154,155,133,246,161,160,159,158,157,173,263,249,390,373,374,380,381,382,362,466,388,387,386,385,384,398], color: '#ffffff', label: 'Eyes' },
   iris: { indices: [468,469,470,471,472,473,474,475,476,477], color: '#FFFFFF', label: 'Iris' },
   eyebrows: { indices: [70,63,105,66,107,55,65,52,53,46,300,293,334,296,336,285,295,282,283,276], color: '#d97706', label: 'Eyebrows' },
-  nose: { indices: [1,2,6,197,195,5,4,49,48,115,220,279,278,344,440,129,198,217,209,358,429,437,420], color: '#059669', label: 'Nose' },
+  nose: { indices: [1,2,4,5,6,19,45,48,64,94,97,98,115,168,195,197,220,275,278,294,326,327,344,440], color: '#059669', label: 'Nose' },
   mouth: { indices: [61,185,40,39,37,0,267,269,270,409,291,78,191,80,81,82,13,312,311,310,415,308,146,91,181,84,17,314,405,321,375,95,88,178,87,14,317,402,318,324], color: '#dc2626', label: 'Mouth' },
   jaw: { indices: [389,356,454,323,361,288,397,365,379,378,400,377,152,148,176,149,150,136,172,58,132,93,234,127,162], color: '#0891b2', label: 'Jawline' },
-  cheeks: { indices: [36,205,206,207,187,123,116,117,118,119,100,47,266,425,426,427,411,352,345,346,347,348,329,277], color: '#db2777', label: 'Cheeks' },
-  forehead: { indices: [9,10,151,338,297,332,284,251,21,54,103,67,109], color: '#4f46e5', label: 'Forehead' }
+  cheeks: { indices: [36,47,50,100,101,116,117,118,119,123,187,205,206,207,266,277,280,329,330,345,346,347,348,352,411,425,426,427], color: '#db2777', label: 'Cheeks' },
+  forehead: { indices: [9,10,21,54,67,68,69,71,103,104,108,109,151,251,284,297,298,299,301,332,333,337,338], color: '#4f46e5', label: 'Forehead' }
 };
 
 const indexToRegion = {};
@@ -350,10 +350,12 @@ const showSidebarBtn = document.getElementById('showSidebar');
 document.getElementById('hideSidebar').addEventListener('click', () => {
   sidebarEl.classList.add('hidden');
   showSidebarBtn.classList.add('visible');
+  showSidebarBtn.setAttribute('aria-expanded', 'false');
 });
 showSidebarBtn.addEventListener('click', () => {
   sidebarEl.classList.remove('hidden');
   showSidebarBtn.classList.remove('visible');
+  showSidebarBtn.setAttribute('aria-expanded', 'true');
 });
 
 const copyBtn = document.getElementById('copySelected');
@@ -433,10 +435,10 @@ document.getElementById('regionToggles').addEventListener('click', e => {
     const allActive = allRegionKeys.every(k => activeRegions.has(k));
     if (allActive) {
       activeRegions.clear();
-      document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.region-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
     } else {
       allRegionKeys.forEach(k => activeRegions.add(k));
-      document.querySelectorAll('.region-btn').forEach(b => b.classList.add('active'));
+      document.querySelectorAll('.region-btn').forEach(b => { b.classList.add('active'); b.setAttribute('aria-pressed', 'true'); });
     }
   } else {
     if (activeRegions.has(region)) {
@@ -445,6 +447,7 @@ document.getElementById('regionToggles').addEventListener('click', e => {
       activeRegions.add(region);
     }
     btn.classList.toggle('active');
+    btn.setAttribute('aria-pressed', activeRegions.has(region) ? 'true' : 'false');
     syncAllBtn();
   }
   updateSelectRegionBtn();
