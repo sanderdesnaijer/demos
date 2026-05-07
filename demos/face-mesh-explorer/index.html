@@ -126,18 +126,16 @@
   .cam-area canvas { position: absolute; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); cursor: crosshair; }
   .sidebar { width: 260px; background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
   .sidebar-section { border-bottom: 1px solid var(--border); }
-  .sidebar-section h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; cursor: pointer; user-select: none; transition: background 0.15s; }
-  .section-header:hover { background: var(--bg); }
-  .section-header .chevron { width: 14px; height: 14px; transition: transform 0.2s; color: var(--text-muted); flex-shrink: 0; }
-  .section-header .chevron.open { transform: rotate(180deg); }
-  .section-body { padding: 0 1rem 0.75rem; }
-  .section-body.collapsed { display: none; }
+  .sidebar-section h3 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0; font-weight: 600; padding: 0.6rem 1rem 0; }
+  .section-body { padding: 0.4rem 1rem 0.75rem; }
   .search-input { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.875rem; background: var(--bg); color: var(--text); outline: none; }
   .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
   .search-feedback { font-size: 0.75rem; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
   .search-feedback .match-region { font-weight: 600; }
   .search-feedback .match-index { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
+  .search-select-btn { background: none; border: 1px solid var(--accent); color: var(--accent); font-size: 0.7rem; padding: 1px 8px; border-radius: 4px; cursor: pointer; margin-left: 6px; }
+  .search-select-btn:hover { background: var(--accent); color: #fff; }
+  .search-select-btn.done { border-color: #16a34a; color: #16a34a; pointer-events: none; }
   .region-toggles { display: flex; flex-wrap: wrap; gap: 6px; }
   .region-btn { padding: 4px 10px; border-radius: 999px; border: 1.5px solid; font-size: 0.75rem; font-weight: 500; cursor: pointer; background: transparent; transition: all 0.15s; }
   .region-btn.active { color: #fff !important; }
@@ -159,22 +157,30 @@
   .region-btn[data-region="iris"].active { background: var(--iris-color); }
   .region-btn[data-region="all"] { border-color: var(--text-muted); color: var(--text-muted); }
   .region-btn[data-region="all"].active { background: var(--text-muted); }
-  .info-card { background: var(--bg); border-radius: 8px; padding: 1rem; }
-  .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 2px; }
-  .info-value { font-size: 1rem; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; }
-  .info-value.large { font-size: 1.5rem; }
-  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
-  .info-header { display: grid; grid-template-columns: auto 1fr; align-items: end; gap: 16px; }
-  .copy-btn { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; cursor: pointer; transition: all 0.15s; font-family: 'SF Mono', 'Fira Code', monospace; }
-  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .copy-btn.copied { border-color: #16a34a; color: #16a34a; }
-  .copy-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .pinned-list { list-style: none; }
+  .info-card { background: var(--bg); border-radius: 8px; padding: 0.75rem; }
+  .info-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 1px; }
+  .info-value { font-size: 0.8rem; font-weight: 600; font-family: 'SF Mono', 'Fira Code', monospace; min-width: 3.5em; }
+  .info-value.large { font-size: 0.85rem; }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .info-grid .info-value { min-width: 4.5em; }
+  .info-header { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 8px; }
+  .copy-cta { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 12px; border-radius: 6px; border: none; background: var(--accent); color: #fff; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'SF Mono', 'Fira Code', monospace; margin-top: 8px; }
+  .copy-cta:hover { opacity: 0.9; }
+  .copy-cta:disabled { opacity: 0.35; cursor: not-allowed; }
+  .copy-cta.copied { background: #16a34a; }
+  .reset-link { background: none; border: none; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; padding: 0; }
+  .reset-link:hover { color: var(--mouth-color); }
+  .select-region-btn { display: none; width: 100%; padding: 6px 10px; border-radius: 6px; border: 1px dashed var(--border); background: transparent; color: var(--text-muted); font-size: 0.75rem; cursor: pointer; transition: all 0.15s; margin-top: 8px; }
+  .select-region-btn.visible { display: block; }
+  .select-region-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .pinned-section { display: flex; flex-direction: column; min-height: 0; }
+  .pinned-list { list-style: none; overflow-y: auto; max-height: 200px; }
   .pinned-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
   .pinned-item .idx { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
   .pinned-item .region-tag { font-size: 0.7rem; padding: 1px 6px; border-radius: 4px; }
   .pinned-item button { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.75rem; }
   .pinned-item button:hover { color: var(--mouth-color); }
+  .pinned-item:hover { background: var(--bg); }
   .start-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); color: #fff; z-index: 10; gap: 1rem; }
   .start-btn { padding: 12px 32px; border-radius: 8px; border: none; background: var(--accent); color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; transition: transform 0.1s; }
   .start-btn:hover { transform: scale(1.03); }
@@ -184,22 +190,17 @@
   .mesh-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; margin-top: 8px; }
   .mesh-toggle input { accent-color: var(--accent); }
   .hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 8px; }
-  .copy-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  .copy-btn:disabled:hover { border-color: var(--border); color: var(--text); }
   .click-hint { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); padding: 6px 14px; border-radius: 999px; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.8rem; z-index: 5; pointer-events: none; }
-  .mobile-btn { display: none; }
-  .mobile-header { display: none; }
+  .sidebar-hide-btn { position: absolute; top: 8px; right: 8px; z-index: 5; padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.25); background: rgba(0,0,0,0.5); color: #fff; font-size: 0.75rem; cursor: pointer; display: none; }
+  .sidebar-hide-btn:hover { background: rgba(0,0,0,0.7); }
+  .sidebar.hidden { display: none; }
+  .sidebar-hide-btn.visible { display: block; }
   @container (max-width: 960px) {
     .header { display: none; }
-    .layout { flex-direction: column; height: 100vh; position: relative; }
-    .cam-area { flex: 1; min-height: 0; }
-    .sidebar { position: absolute; bottom: 0; left: 0; right: 0; width: 100%; max-height: 55vh; border-left: none; border-top: 1px solid var(--border); z-index: 15; transform: translateY(100%); transition: transform 0.25s ease; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); overflow-y: auto; }
-    .sidebar.open { transform: translateY(0); }
-    .mobile-btn { display: flex; position: absolute; z-index: 16; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.8rem; font-weight: 500; cursor: pointer; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-    .mobile-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
-    .sidebar-toggle { bottom: 12px; right: 12px; }
-    .header-toggle { display: none; }
-    .mobile-header { display: none; }
+    .layout { height: 100vh; }
+    .sidebar { width: 200px; }
+    #inspectorSection > h3 { display: none; }
+    .info-card { display: none; }
   }
 </style>
 
@@ -235,34 +236,17 @@
       </div>
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
-      <button class="mobile-btn header-toggle" id="headerToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101"/><path d="M10.172 13.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.102 1.101"/></svg>
-        <span>Links</span>
-      </button>
-      <button class="mobile-btn sidebar-toggle" id="sidebarToggle">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-        <span>Controls</span>
-      </button>
-      <div class="mobile-header" id="mobileHeader">
-        <h2>Face Mesh Landmark Explorer</h2>
-        <p>Hover to inspect, click to pin, search by index or region</p>
-        <div class="mobile-header-links">
-          <a href="https://www.sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks">read the guide</a>
-          <a href="https://demos.sanderdesnaijer.com">all demos</a>
-        </div>
-      </div>
+      <button class="sidebar-hide-btn" id="showSidebar">Controls</button>
     </div>
     <div class="sidebar" id="sidebar">
-      <div class="sidebar-section" data-section="filter">
-        <div class="section-header" onclick="toggleSection('filter')">
-          <h3>Filter</h3>
-          <svg class="chevron open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
+      <button id="hideSidebar" style="width:100%;padding:6px;border:none;border-bottom:1px solid var(--border);background:var(--bg);color:var(--text-muted);font-size:0.7rem;cursor:pointer;text-align:center;">Hide controls</button>
+      <div class="sidebar-section">
+        <h3>Filter</h3>
         <div class="section-body">
           <input type="text" class="search-input" id="searchInput" placeholder="Type index (33) or region (eye)...">
           <div id="searchFeedback" class="search-feedback" style="display:none;"></div>
           <div class="region-toggles" id="regionToggles" style="margin-top:10px;">
-            <button class="region-btn active" data-region="all">All</button>
+            <button class="region-btn" data-region="all">All</button>
             <button class="region-btn" data-region="eyes">Eyes</button>
             <button class="region-btn" data-region="iris">Iris</button>
             <button class="region-btn" data-region="eyebrows">Eyebrows</button>
@@ -272,15 +256,14 @@
             <button class="region-btn" data-region="cheeks">Cheeks</button>
             <button class="region-btn" data-region="forehead">Forehead</button>
           </div>
+          <button class="select-region-btn" id="selectRegionBtn"></button>
           <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
+          <label class="mesh-toggle"><input type="checkbox" id="labelsToggle" checked> Show index labels</label>
           <label class="mesh-toggle"><input type="checkbox" id="wireframeToggle"> Wireframe mode</label>
         </div>
       </div>
-      <div class="sidebar-section" data-section="inspector" id="inspectorSection">
-        <div class="section-header" onclick="toggleSection('inspector')">
-          <h3>Inspector <span id="pinnedCount" style="font-weight:400;"></span></h3>
-          <svg class="chevron open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
-        </div>
+      <div class="sidebar-section" id="inspectorSection">
+        <h3>Inspector <span id="pinnedCount" style="font-weight:400;"></span></h3>
         <div class="section-body">
           <div class="info-card">
             <div class="info-header">
@@ -290,7 +273,7 @@
               </div>
               <div>
                 <div class="info-label">Region</div>
-                <div class="info-value" id="infoRegion" style="font-size:1rem;">--</div>
+                <div class="info-value" id="infoRegion">--</div>
               </div>
             </div>
             <div class="info-grid">
@@ -303,8 +286,9 @@
           <div class="pinned-section" style="margin-top:10px;">
             <div style="display:flex;align-items:center;justify-content:space-between;">
               <div class="info-label">Selected</div>
-              <button class="copy-btn" id="copySelected" disabled style="font-size:0.7rem;padding:3px 8px;">Copy (0)</button>
+              <button class="reset-link" id="resetSelected" style="display:none;">clear all</button>
             </div>
+            <button class="copy-cta" id="copySelected" disabled>Copy indices (0)</button>
             <ul class="pinned-list" id="pinnedList">
               <li style="color:var(--text-muted);font-size:0.8rem;padding:6px 0;">No landmarks selected yet</li>
             </ul>
@@ -314,17 +298,6 @@
     </div>
   </div>
 
-<script>
-function toggleSection(name) {
-  const section = document.querySelector(`.sidebar-section[data-section="${name}"]`);
-  if (!section) return;
-  const body = section.querySelector('.section-body');
-  const chevron = section.querySelector('.chevron');
-  if (!body || !chevron) return;
-  body.classList.toggle('collapsed');
-  chevron.classList.toggle('open');
-}
-</script>
 <script type="module">
 import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
 
@@ -349,9 +322,10 @@ let landmarks = null;
 let hoveredIdx = -1;
 let selectedIdx = -1;
 let pinnedIndices = new Set();
-let activeRegion = 'all';
+let activeRegions = new Set();
 let searchHighlight = new Set();
 let showMesh = true;
+let showLabels = true;
 let mouseX = -1, mouseY = -1;
 
 const videoEl = document.getElementById('video');
@@ -367,36 +341,113 @@ document.getElementById('wireframeToggle').addEventListener('change', e => {
   document.querySelector('.header').style.opacity = on ? '0' : '1';
   document.querySelector('.header').style.pointerEvents = on ? 'none' : '';
 });
+document.getElementById('labelsToggle').addEventListener('change', e => {
+  showLabels = e.target.checked;
+});
 
 const sidebarEl = document.getElementById('sidebar');
-const sidebarToggle = document.getElementById('sidebarToggle');
-const mobileHeader = document.getElementById('mobileHeader');
-const headerToggle = document.getElementById('headerToggle');
-
-sidebarToggle.addEventListener('click', () => {
-  mobileHeader.classList.remove('open');
-  const isOpen = sidebarEl.classList.toggle('open');
-  sidebarToggle.querySelector('span').textContent = isOpen ? 'Close' : 'Controls';
+const showSidebarBtn = document.getElementById('showSidebar');
+document.getElementById('hideSidebar').addEventListener('click', () => {
+  sidebarEl.classList.add('hidden');
+  showSidebarBtn.classList.add('visible');
+});
+showSidebarBtn.addEventListener('click', () => {
+  sidebarEl.classList.remove('hidden');
+  showSidebarBtn.classList.remove('visible');
 });
 
-headerToggle.addEventListener('click', () => {
-  sidebarEl.classList.remove('open');
-  sidebarToggle.querySelector('span').textContent = 'Controls';
-  const isOpen = mobileHeader.classList.toggle('open');
-  headerToggle.querySelector('span').textContent = isOpen ? 'Close' : 'Links';
-});
-document.getElementById('copySelected').addEventListener('click', () => {
+const copyBtn = document.getElementById('copySelected');
+const resetBtn = document.getElementById('resetSelected');
+const selectRegionBtn = document.getElementById('selectRegionBtn');
+
+copyBtn.addEventListener('click', () => {
   if (pinnedIndices.size === 0) return;
   const indices = [...pinnedIndices].sort((a, b) => a - b);
-  copyText(`[${indices.join(', ')}]`);
+  navigator.clipboard.writeText(`[${indices.join(', ')}]`).then(() => {
+    const prev = copyBtn.textContent;
+    copyBtn.textContent = 'Copied!';
+    copyBtn.classList.add('copied');
+    setTimeout(() => { copyBtn.textContent = prev; copyBtn.classList.remove('copied'); }, 1200);
+  });
+});
+
+resetBtn.addEventListener('click', () => {
+  pinnedIndices.clear();
+  updatePinnedList();
+});
+
+const allRegionKeys = Object.keys(REGIONS);
+const allBtn = document.querySelector('.region-btn[data-region="all"]');
+
+function syncAllBtn() {
+  const allActive = allRegionKeys.every(k => activeRegions.has(k));
+  allBtn.classList.toggle('active', allActive);
+}
+
+function getRegionIndices() {
+  const keys = [...activeRegions];
+  const indices = [];
+  for (const key of keys) {
+    if (REGIONS[key]) indices.push(...REGIONS[key].indices);
+  }
+  return { keys, indices };
+}
+
+function areAllSelected(indices) {
+  return indices.length > 0 && indices.every(i => pinnedIndices.has(i));
+}
+
+function updateSelectRegionBtn() {
+  if (activeRegions.size === 0) {
+    selectRegionBtn.classList.remove('visible');
+    return;
+  }
+  const { keys, indices } = getRegionIndices();
+  const allSelected = areAllSelected(indices);
+  const verb = allSelected ? 'Deselect' : 'Select';
+  const isAll = allRegionKeys.every(k => activeRegions.has(k));
+  const label = isAll
+    ? 'all region'
+    : keys.map(key => REGIONS[key] ? REGIONS[key].label : key).join(' + ');
+  selectRegionBtn.textContent = `${verb} ${indices.length} ${label} points`;
+  selectRegionBtn.classList.add('visible');
+}
+
+selectRegionBtn.addEventListener('click', () => {
+  const { indices } = getRegionIndices();
+  const allSelected = areAllSelected(indices);
+  for (const i of indices) {
+    if (allSelected) pinnedIndices.delete(i);
+    else pinnedIndices.add(i);
+  }
+  updatePinnedList();
+  updateSelectRegionBtn();
 });
 
 document.getElementById('regionToggles').addEventListener('click', e => {
   const btn = e.target.closest('.region-btn');
   if (!btn) return;
-  document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  activeRegion = btn.dataset.region;
+  const region = btn.dataset.region;
+
+  if (region === 'all') {
+    const allActive = allRegionKeys.every(k => activeRegions.has(k));
+    if (allActive) {
+      activeRegions.clear();
+      document.querySelectorAll('.region-btn').forEach(b => b.classList.remove('active'));
+    } else {
+      allRegionKeys.forEach(k => activeRegions.add(k));
+      document.querySelectorAll('.region-btn').forEach(b => b.classList.add('active'));
+    }
+  } else {
+    if (activeRegions.has(region)) {
+      activeRegions.delete(region);
+    } else {
+      activeRegions.add(region);
+    }
+    btn.classList.toggle('active');
+    syncAllBtn();
+  }
+  updateSelectRegionBtn();
 });
 
 canvasEl.addEventListener('mousemove', e => {
@@ -423,51 +474,92 @@ canvasEl.addEventListener('click', () => {
   updatePinnedList();
 });
 
+let preSearchRegions = null;
+
+function clearSearchFilters() {
+  if (preSearchRegions !== null) {
+    activeRegions.clear();
+    preSearchRegions.forEach(r => activeRegions.add(r));
+    preSearchRegions = null;
+    document.querySelectorAll('.region-btn').forEach(b => {
+      b.classList.toggle('active', activeRegions.has(b.dataset.region));
+    });
+    syncAllBtn();
+    updateSelectRegionBtn();
+  }
+}
+
+function applySearchFilters(keys) {
+  if (preSearchRegions === null) preSearchRegions = new Set(activeRegions);
+  activeRegions.clear();
+  keys.forEach(k => activeRegions.add(k));
+  document.querySelectorAll('.region-btn').forEach(b => {
+    b.classList.toggle('active', activeRegions.has(b.dataset.region));
+  });
+  syncAllBtn();
+  updateSelectRegionBtn();
+}
+
 function onSearch(e) {
   const q = e.target.value.trim().toLowerCase();
   const feedback = document.getElementById('searchFeedback');
   searchHighlight.clear();
-  if (!q) { feedback.style.display = 'none'; return; }
+  if (!q) {
+    feedback.style.display = 'none';
+    clearSearchFilters();
+    return;
+  }
   const num = parseInt(q);
   if (!isNaN(num) && num >= 0 && num <= 477) {
     searchHighlight.add(num);
+    clearSearchFilters();
     const region = indexToRegion[num];
-    feedback.innerHTML = `<span class="match-index">#${num}</span> &mdash; ${region ? `<span class="match-region" style="color:${region.color}">${region.label}</span>` : 'General mesh point'}`;
+    const isPinned = pinnedIndices.has(num);
+    const selectHtml = isPinned
+      ? `<span class="search-select-btn done">selected</span>`
+      : `<button class="search-select-btn" id="searchSelectIdx">select</button>`;
+    feedback.innerHTML = `<span class="match-index">#${num}</span> - ${region ? `<span class="match-region" style="color:${region.color}">${region.label}</span>` : 'Mesh point'} ${selectHtml}`;
     feedback.style.display = 'block';
+    const btn = document.getElementById('searchSelectIdx');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        pinnedIndices.add(num);
+        updatePinnedList();
+        btn.textContent = 'selected';
+        btn.classList.add('done');
+      });
+    }
     return;
   }
+  const matchedKeys = [];
   const matchedRegions = [];
   for (const [key, val] of Object.entries(REGIONS)) {
     if (key.includes(q) || val.label.toLowerCase().includes(q)) {
       val.indices.forEach(i => searchHighlight.add(i));
+      matchedKeys.push(key);
       matchedRegions.push(val);
     }
   }
   if (matchedRegions.length > 0) {
+    applySearchFilters(matchedKeys);
     const parts = matchedRegions.map(r => `<span class="match-region" style="color:${r.color}">${r.label}</span> (${r.indices.length})`);
     feedback.innerHTML = `${searchHighlight.size} landmarks: ${parts.join(', ')}`;
     feedback.style.display = 'block';
   } else {
+    clearSearchFilters();
     feedback.innerHTML = 'No matching regions or indices';
     feedback.style.display = 'block';
   }
 }
 
-function copyText(text) {
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(() => {
-    const btns = document.querySelectorAll('.copy-btn');
-    btns.forEach(b => { b.classList.add('copied'); setTimeout(() => b.classList.remove('copied'), 800); });
-  });
-}
 
 function updatePinnedList() {
   const list = document.getElementById('pinnedList');
   const count = document.getElementById('pinnedCount');
-  const copyBtn = document.getElementById('copySelected');
   count.textContent = pinnedIndices.size > 0 ? `(${pinnedIndices.size} selected)` : '';
-  copyBtn.textContent = `Copy (${pinnedIndices.size})`;
+  copyBtn.textContent = `Copy indices (${pinnedIndices.size})`;
   copyBtn.disabled = pinnedIndices.size === 0;
+  resetBtn.style.display = pinnedIndices.size > 0 ? '' : 'none';
   if (pinnedIndices.size === 0) {
     list.innerHTML = '<li style="color:var(--text-muted);font-size:0.8rem;padding:6px 0;">No landmarks selected yet</li>';
     return;
@@ -480,7 +572,9 @@ function updatePinnedList() {
     li.innerHTML = `<span class="idx">#${idx}</span>
       <span class="region-tag" style="background:${region ? region.color + '22' : 'var(--bg)'};color:${region ? region.color : 'var(--text-muted)'}">${region ? region.label : 'Mesh'}</span>
       <button data-idx="${idx}">remove</button>`;
-    li.querySelector('button').addEventListener('click', () => { pinnedIndices.delete(idx); updatePinnedList(); });
+    li.querySelector('button').addEventListener('click', (e) => { e.stopPropagation(); pinnedIndices.delete(idx); updatePinnedList(); updateSelectRegionBtn(); });
+    li.style.cursor = 'pointer';
+    li.addEventListener('click', () => { pinnedIndices.delete(idx); updatePinnedList(); updateSelectRegionBtn(); });
     list.appendChild(li);
   }
 }
@@ -601,20 +695,12 @@ function draw() {
 
   let closestIdx = -1;
   let closestDist = 0.03;
+  const noFilter = activeRegions.size === 0;
 
-  for (let i = 0; i < landmarks.length; i++) {
-    const p = landmarks[i];
-    const region = indexToRegion[i];
-    const isInActiveRegion = activeRegion === 'all' || (region && region.key === activeRegion);
-    const isSearched = searchHighlight.size > 0 ? searchHighlight.has(i) : true;
-    const isPinned = pinnedIndices.has(i);
-
-    if (!isInActiveRegion && !isPinned) continue;
-
-    const x = p.x * w;
-    const y = p.y * h;
-
-    if (mouseX >= 0) {
+  // First pass: find closest point to cursor (always scan all landmarks)
+  if (mouseX >= 0) {
+    for (let i = 0; i < landmarks.length; i++) {
+      const p = landmarks[i];
       const dx = p.x - mouseX;
       const dy = p.y - mouseY;
       const dist = Math.sqrt(dx * dx + dy * dy);
@@ -623,12 +709,32 @@ function draw() {
         closestIdx = i;
       }
     }
+  }
+
+  // Determine hovered region for unfiltered highlight
+  const hoveredRegion = (noFilter && closestIdx >= 0) ? indexToRegion[closestIdx] : null;
+
+  // Second pass: draw landmarks
+  for (let i = 0; i < landmarks.length; i++) {
+    const p = landmarks[i];
+    const region = indexToRegion[i];
+    const isInActiveRegion = region && activeRegions.has(region.key);
+    const isInHoveredRegion = hoveredRegion && region && region.key === hoveredRegion.key;
+    const isSearched = searchHighlight.size > 0 ? searchHighlight.has(i) : true;
+    const isPinned = pinnedIndices.has(i);
+
+    const isSearchMatch = searchHighlight.size > 0 && searchHighlight.has(i);
+    if (!isInActiveRegion && !isPinned && !isInHoveredRegion && !isSearchMatch && i !== closestIdx) continue;
+
+    const x = p.x * w;
+    const y = p.y * h;
 
     let radius = 2;
     let color = 'rgba(255,255,255,0.3)';
     let alpha = isSearched ? 1 : 0.15;
 
     if (region) color = region.color;
+    if (isInHoveredRegion && !isInActiveRegion) { alpha = 0.85; radius = 3; }
     if (isPinned) { radius = 5; alpha = 1; }
 
     ctx.globalAlpha = alpha;
@@ -654,13 +760,15 @@ function draw() {
     ctx.fillStyle = '#facc15';
     ctx.fill();
 
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 11px monospace';
-    ctx.textAlign = 'center';
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.fillText(closestIdx, -x, y - 14);
-    ctx.restore();
+    if (showLabels) {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.fillText(closestIdx, -x, y - 14);
+      ctx.restore();
+    }
 
     const rect = canvasEl.getBoundingClientRect();
     const scale = Math.max(rect.width / canvasEl.width, rect.height / canvasEl.height);
@@ -685,13 +793,15 @@ function draw() {
     ctx.strokeStyle = '#facc15';
     ctx.lineWidth = 2;
     ctx.stroke();
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 12px monospace';
-    ctx.textAlign = 'center';
-    ctx.save();
-    ctx.scale(-1, 1);
-    ctx.fillText(idx, -x, y - 16);
-    ctx.restore();
+    if (showLabels) {
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px monospace';
+      ctx.textAlign = 'center';
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.fillText(idx, -x, y - 16);
+      ctx.restore();
+    }
   }
 
   if (closestIdx !== hoveredIdx) {
