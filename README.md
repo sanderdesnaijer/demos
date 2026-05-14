@@ -29,6 +29,7 @@ Interactive reference for all 478 MediaPipe Face Mesh landmark indices. Hover ov
 Zoom and pan maps with hand gestures. Make a fist to pan, spread two open hands to zoom. Powered by MediaPipe hand tracking, runs entirely in the browser. No backend, no touch, no mouse.
 
 - **Demo:** [demo-controls-overview.html](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html)
+- **Docs:** [sanderdesnaijer.github.io/map-gesture-controls](https://sanderdesnaijer.github.io/map-gesture-controls/) -- getting started, API reference, and examples
 - **Project:** [sanderdesnaijer.com/projects/map-gesture-controls](https://sanderdesnaijer.com/projects/map-gesture-controls)
 - **Tutorial:** [sanderdesnaijer.com/blog/gesture-controls-openlayers-mediapipe](https://sanderdesnaijer.com/blog/gesture-controls-openlayers-mediapipe)
 - **Repo:** [github.com/sanderdesnaijer/map-gesture-controls](https://github.com/sanderdesnaijer/map-gesture-controls)
