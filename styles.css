@@ -348,11 +348,16 @@ a {
   flex: 1;
   display: flex;
   align-items: center;
+  white-space: nowrap;
   transition: color var(--transition-card);
 }
 
 .card-footer-link:hover {
   color: var(--color-text-primary);
+}
+
+.card-footer-link--compact {
+  flex: 0 0 auto;
 }
 
 .card-footer-link--right {

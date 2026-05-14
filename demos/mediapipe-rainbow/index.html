@@ -202,6 +202,38 @@
       color: #888;
       font-size: 0.68rem;
     }
+
+    .demo-footer {
+      width: 100%;
+      max-width: 940px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: #999;
+    }
+
+    .demo-footer a {
+      color: #666;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .demo-footer a:hover { color: #333; }
+
+    .demo-footer .footer-sep {
+      color: #ddd;
+    }
+
+    .demo-footer .site-logo {
+      width: 16px;
+      height: 16px;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=GA_PLACEHOLDER"></script>
@@ -219,6 +251,8 @@
     <div class="logo"><h1>MediaPipe Hand & Face Tracking</h1></div>
     <div class="header-right">
       <a href="https://sanderdesnaijer.com/blog/mediapipe-hand-face-tracking">Read tutorial</a>
+      <a href="https://github.com/sanderdesnaijer/demos/tree/main/demos/mediapipe-rainbow" target="_blank" rel="noopener">Source</a>
+      <a href="https://demos.sanderdesnaijer.com">All demos</a>
       <div class="pill" id="pill">Loading...</div>
     </div>
   </header>
@@ -266,6 +300,19 @@
       </div>
     </div>
   </div>
+
+  <footer class="demo-footer">
+    <a href="https://demos.sanderdesnaijer.com">all demos</a>
+    <span class="footer-sep">·</span>
+    <a href="https://sanderdesnaijer.com/blog/mediapipe-hand-face-tracking">read tutorial</a>
+    <span class="footer-sep">·</span>
+    <a href="https://github.com/sanderdesnaijer/demos/tree/main/demos/mediapipe-rainbow" target="_blank" rel="noopener">source</a>
+    <span class="footer-sep">·</span>
+    <a href="https://sanderdesnaijer.com" style="display:inline-flex;align-items:center;">
+      <img src="../../img/logo-sanderdesnaijer.svg" alt="Sander de Snaijer logo" class="site-logo" />
+      sanderdesnaijer.com
+    </a>
+  </footer>
 
   <script type="module">
     import { FilesetResolver, HandLandmarker, FaceLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3";

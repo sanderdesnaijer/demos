@@ -29,6 +29,8 @@ Interactive reference for all 478 MediaPipe Face Mesh landmark indices. Hover ov
 Zoom and pan maps with hand gestures. Make a fist to pan, spread two open hands to zoom. Powered by MediaPipe hand tracking, runs entirely in the browser. No backend, no touch, no mouse.
 
 - **Demo:** [demo-controls-overview.html](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html)
+- **Project:** [sanderdesnaijer.com/projects/map-gesture-controls](https://sanderdesnaijer.com/projects/map-gesture-controls)
+- **Tutorial:** [sanderdesnaijer.com/blog/gesture-controls-openlayers-mediapipe](https://sanderdesnaijer.com/blog/gesture-controls-openlayers-mediapipe)
 - **Repo:** [github.com/sanderdesnaijer/map-gesture-controls](https://github.com/sanderdesnaijer/map-gesture-controls)
 - **Stack:** MediaPipe, OpenLayers, WebGL, TypeScript, Webcam
 
@@ -45,6 +47,7 @@ Hand tracking and face detection running live in the browser. Draw rainbow trail
 Face-controlled Tetris. Raise your eyebrows to rotate a piece, open your mouth to drop it.
 
 - **Site:** [eyebrow-tetris.sanderdesnaijer.com](https://eyebrow-tetris.sanderdesnaijer.com)
+- **Project:** [sanderdesnaijer.com/projects/eyebrow-tetris](https://sanderdesnaijer.com/projects/eyebrow-tetris)
 - **Stack:** MediaPipe, WebGL, TypeScript
 
 ### Pug's Hunt
@@ -52,6 +55,7 @@ Face-controlled Tetris. Raise your eyebrows to rotate a piece, open your mouth t
 Duck Hunt with hand tracking. Your webcam hand replaces the lightgun.
 
 - **Site:** [pugshunt.com](https://pugshunt.com)
+- **Project:** [sanderdesnaijer.com/projects/pug-s-hunt-a-webcam-controlled-duck-hunt-built-with-hand-tracking](https://sanderdesnaijer.com/projects/pug-s-hunt-a-webcam-controlled-duck-hunt-built-with-hand-tracking)
 - **Stack:** MediaPipe, Webcam, TypeScript
 
 ---
@@ -92,8 +96,12 @@ Deployed to GitHub Pages from the `main` branch. No build step needed, push and 
 
 - [sanderdesnaijer.com](https://sanderdesnaijer.com) -- main site with projects and blog
 - [Face Mesh Landmark Guide](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks) -- companion blog post for the explorer
-- [Map Gesture Controls](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html) -- OpenLayers + MediaPipe (GitHub Pages)
+- [MediaPipe Hand & Face Tracking Tutorial](https://sanderdesnaijer.com/blog/mediapipe-hand-face-tracking) -- tutorial for the rainbow demo
+- [Map Gesture Controls project](https://sanderdesnaijer.com/projects/map-gesture-controls) -- project write-up on sanderdesnaijer.com
+- [Map Gesture Controls demo](https://sanderdesnaijer.github.io/map-gesture-controls/demo/demo-controls-overview.html) -- OpenLayers + MediaPipe (GitHub Pages)
+- [Eyebrow Tetris project](https://sanderdesnaijer.com/projects/eyebrow-tetris) -- project write-up on sanderdesnaijer.com
 - [eyebrow-tetris.sanderdesnaijer.com](https://eyebrow-tetris.sanderdesnaijer.com)
+- [Pug's Hunt project](https://sanderdesnaijer.com/projects/pug-s-hunt-a-webcam-controlled-duck-hunt-built-with-hand-tracking) -- project write-up on sanderdesnaijer.com
 - [pugshunt.com](https://pugshunt.com)
 
 ---
