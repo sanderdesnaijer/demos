@@ -22,6 +22,7 @@ Interactive reference for all 478 MediaPipe Face Mesh landmark indices. Hover ov
 
 - **Demo:** [demos.sanderdesnaijer.com/demos/face-mesh-explorer/](https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/)
 - **Guide:** [sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks)
+- **Project:** [sanderdesnaijer.com/projects/mediapipe-face-landmark-explorer](https://www.sanderdesnaijer.com/projects/mediapipe-face-landmark-explorer)
 - **Stack:** MediaPipe FaceLandmarker, HTML Canvas, Vanilla JavaScript, Webcam
 
 ### Map Gesture Controls
