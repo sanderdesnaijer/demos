@@ -6,38 +6,38 @@
 <link rel="icon" type="image/svg+xml" href="../../img/logo-sanderdesnaijer.svg" />
 
 <!-- Primary SEO -->
-<title>MediaPipe Face Mesh Explorer - 478 Point Demo</title>
-<meta name="description" content="Explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover, click, and copy landmark data in real time. Runs in your browser.">
-<meta name="keywords" content="MediaPipe Face Mesh, landmark explorer, face landmark indices, 478 points, face detection JavaScript, gesture recognition, webcam face tracking, MediaPipe FaceLandmarker, face mesh index, landmark lookup tool">
+<title>MediaPipe Face Mesh &amp; Hand Landmark Explorer</title>
+<meta name="description" content="Explore all 478 MediaPipe face landmarks and 21 hand landmarks per hand on your own webcam. Hover to inspect, pin, and copy indices. Runs in your browser.">
+<meta name="keywords" content="MediaPipe Face Mesh, landmark explorer, face landmark indices, 478 points, hand landmarks, 21 hand landmark indices, MediaPipe HandLandmarker, hand landmark names, face detection JavaScript, webcam face tracking, MediaPipe FaceLandmarker, face mesh index, landmark lookup tool">
 <link rel="canonical" href="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" />
 <meta name="robots" content="index, follow" />
 <meta name="author" content="Sander de Snaijer" />
 
 <!-- Open Graph -->
 <meta property="og:site_name" content="Interactive Demos - Sander de Snaijer" />
-<meta property="og:title" content="MediaPipe Face Mesh Landmark Explorer - All 478 Points" />
-<meta property="og:description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices on your own face. Hover to inspect, click to pin, search by index or region." />
+<meta property="og:title" content="MediaPipe Face Mesh &amp; Hand Landmark Explorer" />
+<meta property="og:description" content="Interactive tool for all 478 MediaPipe face landmark indices and the 21 hand landmarks per hand. Hover to inspect, click to pin, search by index or region." />
 <meta property="og:url" content="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/" />
 <meta property="og:image" content="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/mediapipe-face-mesh.webp" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="MediaPipe Face Mesh tracking 478 landmarks frozen mid-expression, showing numbered landmark points grouped by color per face region" />
+<meta property="og:image:alt" content="MediaPipe face mesh and two hand skeletons tracked live, with numbered landmark points coloured per face region and per finger" />
 <meta property="og:type" content="website" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="MediaPipe Face Mesh Landmark Explorer - All 478 Points" />
-<meta name="twitter:description" content="Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices. Hover, click, copy. Runs entirely in your browser." />
+<meta name="twitter:title" content="MediaPipe Face Mesh &amp; Hand Landmark Explorer" />
+<meta name="twitter:description" content="Interactive tool for all 478 MediaPipe face landmarks and 21 per hand. Hover, pin, copy. Runs entirely in your browser." />
 <meta name="twitter:image" content="https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/mediapipe-face-mesh.webp" />
-<meta name="twitter:image:alt" content="MediaPipe Face Mesh tracking 478 landmarks frozen mid-expression, showing numbered landmark points grouped by color per face region" />
+<meta name="twitter:image:alt" content="MediaPipe face mesh and two hand skeletons tracked live, with numbered landmark points coloured per face region and per finger" />
 
 <!-- JSON-LD: WebApplication -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "MediaPipe Face Mesh Landmark Explorer",
-  "description": "Interactive tool to explore all 478 MediaPipe Face Mesh landmark indices. Use your webcam to hover over any point on your face, see its index and region, and copy coordinates to your clipboard.",
+  "name": "MediaPipe Face Mesh & Hand Landmark Explorer",
+  "description": "Interactive tool to explore all 478 MediaPipe face landmark indices and the 21 hand landmarks per hand. Use your webcam to hover over any point, see its index, region and official MediaPipe name, and copy indices to your clipboard.",
   "url": "https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
@@ -56,14 +56,17 @@
   },
   "featureList": [
     "Explore all 478 MediaPipe Face Mesh landmark indices",
-    "Real-time webcam face tracking",
-    "Filter landmarks by face region",
-    "Search by index number or region name",
+    "Track two hands and inspect all 21 hand landmarks per hand",
+    "Official MediaPipe hand landmark names such as INDEX_FINGER_TIP",
+    "Real-time webcam face and hand tracking",
+    "Filter landmarks by face region or by finger",
+    "Search by index number, region name or finger",
     "Click to pin and copy landmark indices",
-    "Show mesh tessellation connections",
+    "Show mesh tessellation and hand connections",
+    "Wireframe mode and 1200 x 630 PNG export",
     "Runs entirely in the browser with no backend"
   ],
-  "keywords": "MediaPipe, Face Mesh, landmark index, face detection, webcam, JavaScript, computer vision"
+  "keywords": "MediaPipe, Face Mesh, hand landmarks, landmark index, face detection, hand tracking, webcam, JavaScript, computer vision"
 }
 </script>
 
@@ -88,7 +91,7 @@
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "Face Mesh Landmark Explorer",
+      "name": "Face Mesh & Hand Landmark Explorer",
       "item": "https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/"
     }
   ]
@@ -204,6 +207,10 @@
   .start-btn:active { transform: scale(0.98); }
   .status-bar { position: absolute; bottom: 12px; left: 12px; padding: 4px 10px; border-radius: 6px; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.75rem; z-index: 5; }
   .freeze-badge { position: absolute; top: 12px; right: 12px; padding: 5px 12px; border-radius: 6px; background: rgba(220,38,38,0.85); color: #fff; font-size: 0.75rem; font-weight: 600; z-index: 5; display: none; letter-spacing: 0.05em; }
+  .countdown { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; z-index: 8; pointer-events: none; }
+  .countdown.visible { display: flex; }
+  .countdown span { font-size: 9rem; font-weight: 700; color: #fff; text-shadow: 0 0 40px rgba(45,212,191,0.8), 0 0 12px rgba(0,0,0,0.6); font-variant-numeric: tabular-nums; animation: countpulse 1s ease-out; }
+  @keyframes countpulse { from { transform: scale(1.35); opacity: 0.2; } to { transform: scale(1); opacity: 1; } }
   .tooltip { position: absolute; pointer-events: none; background: rgba(0,0,0,0.8); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-family: 'SF Mono', 'Fira Code', monospace; z-index: 20; transform: translate(-50%, -120%); white-space: nowrap; }
   .mesh-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; margin-top: 8px; }
   .mesh-toggle input { accent-color: var(--accent); }
@@ -233,8 +240,8 @@
 <body>
   <header class="header">
     <div class="header-left">
-      <h1>MediaPipe Face Mesh Landmark Explorer</h1>
-      <p>Hover to inspect, click to pin, search by index or region</p>
+      <h1>MediaPipe Face Mesh &amp; Hand Landmark Explorer</h1>
+      <p>478 face landmarks, 21 per hand. Hover to inspect, click to pin, search by index or region</p>
     </div>
     <div class="header-links">
       <a class="header-link header-link--cta" href="https://www.sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks">Open landmark guide</a>
@@ -260,6 +267,7 @@
       <div id="statusBar" class="status-bar" style="display:none;">Loading model...</div>
       <div id="clickHint" class="click-hint" style="display:none;">Click a marker to select it</div>
       <div id="freezeBadge" class="freeze-badge">FROZEN</div>
+      <div id="countdown" class="countdown" aria-live="polite"><span></span></div>
       <button class="sidebar-hide-btn" id="showSidebar" aria-expanded="false" aria-controls="sidebar">Controls</button>
     </div>
     <aside class="sidebar" id="sidebar" role="complementary" aria-label="Landmark controls">
@@ -280,6 +288,10 @@
             <button class="region-btn" data-region="cheeks" aria-pressed="false">Cheeks</button>
             <button class="region-btn" data-region="forehead" aria-pressed="false">Forehead</button>
           </div>
+          <div id="handRegionWrap" style="display:none;margin-top:10px;">
+            <div class="info-label">Hand regions</div>
+            <div class="region-toggles" id="handRegionToggles" style="margin-top:4px;"></div>
+          </div>
           <button class="select-region-btn" id="selectRegionBtn"></button>
           <label class="mesh-toggle"><input type="checkbox" id="meshToggle" checked> Show mesh connections</label>
           <label class="mesh-toggle"><input type="checkbox" id="labelsToggle" checked> Show index labels</label>
@@ -291,6 +303,10 @@
           </div>
           <div class="theme-panel" id="themePanel">
             <div class="theme-grid" id="themeGrid"></div>
+            <div id="handThemeWrap" style="margin-top:10px;">
+              <div class="info-label" style="margin-bottom:4px;">Hand colours</div>
+              <div class="theme-grid" id="handThemeGrid"></div>
+            </div>
             <div class="glow-controls">
               <div class="glow-slider">
                 <span>Dot size</span>
@@ -308,6 +324,21 @@
           </div>
         </div>
       </div>
+      <div class="sidebar-section" id="handSection">
+        <h2>Hands &amp; capture</h2>
+        <div class="section-body">
+          <label class="mesh-toggle"><input type="checkbox" id="faceToggle" checked> Show face landmarks</label>
+          <label class="mesh-toggle"><input type="checkbox" id="handsToggle"> Show hand landmarks</label>
+          <label class="mesh-toggle"><input type="checkbox" id="cameraToggle" checked> Show camera background</label>
+          <label class="mesh-toggle"><input type="checkbox" id="pointsToggle" checked> Show landmark points</label>
+          <label class="mesh-toggle"><input type="checkbox" id="connectionsToggle" checked> Show landmark connections</label>
+          <label class="mesh-toggle"><input type="checkbox" id="captureLabelsToggle"> Include labels in capture</label>
+          <label class="mesh-toggle"><input type="checkbox" id="overlayToggle"> Download-themed overlay</label>
+          <button class="copy-cta" id="captureBtn">Capture PNG 1200 x 630</button>
+          <div class="hint" id="handStatus">Hand model loads on demand.</div>
+          <div class="hint">Press <kbd style="font-size:0.65rem;padding:1px 4px;border:1px solid var(--border);border-radius:3px;">C</kbd> to capture without moving the mouse, so the point you are hovering stays labelled.</div>
+        </div>
+      </div>
       <div class="sidebar-section" id="inspectorSection">
         <h2>Inspector <span id="pinnedCount" style="font-weight:400;"></span></h2>
         <div class="section-body">
@@ -321,6 +352,10 @@
                 <div class="info-label">Region</div>
                 <div class="info-value" id="infoRegion">--</div>
               </div>
+            </div>
+            <div id="infoNameRow" style="margin-top:8px;display:none;">
+              <div class="info-label">MediaPipe name</div>
+              <div class="info-value" id="infoName" style="font-size:0.72rem;">--</div>
             </div>
             <div class="info-grid">
               <div><div class="info-label">X</div><div class="info-value" id="infoX">--</div></div>
@@ -345,7 +380,7 @@
   </main>
 
 <script type="module">
-import { FaceLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
+import { FaceLandmarker, HandLandmarker, FilesetResolver, DrawingUtils } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs';
 
 const REGIONS = {
   eyes: { indices: [33,7,163,144,145,153,154,155,133,246,161,160,159,158,157,173,263,249,390,373,374,380,381,382,362,466,388,387,386,385,384,398], color: '#0ea5e9', label: 'Eyes' },
@@ -376,16 +411,109 @@ let mouseX = -1, mouseY = -1;
 let frozen = false;
 let frozenImageData = null;
 
+// ---- Hand tracking state ----
+const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm';
+const FACE_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task';
+const HAND_MODEL_URL = 'https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task';
+// Official MediaPipe hand landmark names, index 0-20.
+const HAND_NAMES = [
+  'WRIST',
+  'THUMB_CMC', 'THUMB_MCP', 'THUMB_IP', 'THUMB_TIP',
+  'INDEX_FINGER_MCP', 'INDEX_FINGER_PIP', 'INDEX_FINGER_DIP', 'INDEX_FINGER_TIP',
+  'MIDDLE_FINGER_MCP', 'MIDDLE_FINGER_PIP', 'MIDDLE_FINGER_DIP', 'MIDDLE_FINGER_TIP',
+  'RING_FINGER_MCP', 'RING_FINGER_PIP', 'RING_FINGER_DIP', 'RING_FINGER_TIP',
+  'PINKY_MCP', 'PINKY_PIP', 'PINKY_DIP', 'PINKY_TIP'
+];
+
+// Filters may overlap (the knuckle row counts as palm and as part of a finger);
+// colour always comes from the finger a point belongs to.
+const HAND_REGIONS = {
+  thumb:  { indices: [1,2,3,4],        color: '#e879f9', label: 'Thumb' },
+  index:  { indices: [5,6,7,8],        color: '#c084fc', label: 'Index' },
+  middle: { indices: [9,10,11,12],     color: '#a78bfa', label: 'Middle' },
+  ring:   { indices: [13,14,15,16],    color: '#818cf8', label: 'Ring' },
+  pinky:  { indices: [17,18,19,20],    color: '#6366f1', label: 'Pinky' },
+  palm:   { indices: [0,1,5,9,13,17],  color: '#cbd5e1', label: 'Palm' }
+};
+
+const handIndexToRegion = [];
+for (let i = 0; i < 21; i++) {
+  const key = i === 0 ? 'palm'
+    : i <= 4 ? 'thumb'
+    : i <= 8 ? 'index'
+    : i <= 12 ? 'middle'
+    : i <= 16 ? 'ring' : 'pinky';
+  handIndexToRegion[i] = { key, ...HAND_REGIONS[key] };
+}
+
+// Checked against a real webcam on 15 Nov 2026: the raw label already matches
+// the hand the person raised, so nothing is flipped. Kept as a switch because
+// this depends on how the camera delivers the frame; set it to true if a
+// browser or MediaPipe version ever reports the opposite hand.
+const SWAP_HANDEDNESS = false;
+function displayHandedness(raw) {
+  if (!raw) return '';
+  if (!SWAP_HANDEDNESS) return raw;
+  return raw === 'Left' ? 'Right' : raw === 'Right' ? 'Left' : raw;
+}
+const WIREFRAME_FACE_COLOR = 'rgba(45,212,191,0.45)';
+const FINGER_TIPS = new Set([4, 8, 12, 16, 20]);
+const CAPTURE_W = 1200, CAPTURE_H = 630;
+
+let visionFileset = null;
+let handLandmarker = null;
+let handLoadPromise = null;
+let handResults = [];   // [{ landmarks, handedness }] - replaced wholesale each hand frame
+let detectTick = 0;     // simple alternating face/hand scheduler
+let showFace = true;
+let showHands = false;
+let showCamera = true;
+let showPoints = true;
+let showConnections = true;
+let showDownloadOverlay = false;
+let labelsInCapture = false;
+
+const activeHandRegions = new Set();
+const handSearchHighlight = new Set();
+const pinnedHands = new Map();  // 'Right#8' -> { handKey, idx }
+let hoveredHand = null;         // { handKey, slot, idx }
+// The point the cursor was on when it left the canvas. Kept so that reaching
+// for the Capture button does not throw away the marker you lined up.
+let heldHover = null;
+
+function handKeyOf(hand, slot) {
+  return hand.handedness || ('hand' + (slot + 1));
+}
+function handLabelOf(handKey) {
+  return handKey === 'Left' || handKey === 'Right' ? handKey + ' hand' : 'Hand ' + handKey.slice(4);
+}
+
 const videoEl = document.getElementById('video');
 const canvasEl = document.getElementById('canvas');
 ctx = canvasEl.getContext('2d');
+
+const faceToggleEl = document.getElementById('faceToggle');
+const handsToggleEl = document.getElementById('handsToggle');
+const cameraToggleEl = document.getElementById('cameraToggle');
+const pointsToggleEl = document.getElementById('pointsToggle');
+const connectionsToggleEl = document.getElementById('connectionsToggle');
+const overlayToggleEl = document.getElementById('overlayToggle');
+const captureLabelsToggleEl = document.getElementById('captureLabelsToggle');
+const captureBtnEl = document.getElementById('captureBtn');
+const handStatusEl = document.getElementById('handStatus');
+
+function updateCameraVisibility() {
+  videoEl.style.opacity = (showCamera && !frozen) ? '1' : '0';
+}
 
 document.getElementById('startBtn').addEventListener('click', startCamera);
 document.getElementById('searchInput').addEventListener('input', onSearch);
 document.getElementById('meshToggle').addEventListener('change', e => { showMesh = e.target.checked; if (frozen) draw(); });
 document.getElementById('wireframeToggle').addEventListener('change', e => {
   const on = e.target.checked;
-  if (!frozen) videoEl.style.opacity = on ? '0' : '1';
+  showCamera = !on;
+  cameraToggleEl.checked = showCamera;
+  updateCameraVisibility();
   document.querySelector('.header').style.opacity = on ? '0' : '1';
   document.querySelector('.header').style.pointerEvents = on ? 'none' : '';
   if (frozen) {
@@ -398,6 +526,63 @@ document.getElementById('labelsToggle').addEventListener('change', e => {
   if (frozen) draw();
 });
 
+faceToggleEl.addEventListener('change', e => { showFace = e.target.checked; if (frozen) draw(); });
+handsToggleEl.addEventListener('change', async e => {
+  showHands = e.target.checked;
+  document.getElementById('handRegionWrap').style.display = showHands ? 'block' : 'none';
+  if (showHands) {
+    await ensureHandLandmarker();
+  } else {
+    handResults = [];
+    hoveredHand = null;
+  }
+  updateSelectRegionBtn();
+  if (frozen) draw();
+});
+cameraToggleEl.addEventListener('change', e => {
+  showCamera = e.target.checked;
+  updateCameraVisibility();
+  if (frozen) { if (!showCamera) frozenImageData = null; draw(); }
+});
+pointsToggleEl.addEventListener('change', e => { showPoints = e.target.checked; if (frozen) draw(); });
+connectionsToggleEl.addEventListener('change', e => { showConnections = e.target.checked; if (frozen) draw(); });
+overlayToggleEl.addEventListener('change', e => { showDownloadOverlay = e.target.checked; });
+captureLabelsToggleEl.addEventListener('change', e => { labelsInCapture = e.target.checked; });
+captureBtnEl.addEventListener('click', () => {
+  if (countdownTimer) cancelCountdown();
+  else startCaptureCountdown(3);
+});
+
+async function getVision() {
+  if (!visionFileset) visionFileset = await FilesetResolver.forVisionTasks(WASM_URL);
+  return visionFileset;
+}
+
+async function ensureHandLandmarker() {
+  if (handLandmarker) return handLandmarker;
+  if (handLoadPromise) return handLoadPromise;
+  handStatusEl.textContent = 'Loading hand_landmarker.task...';
+  handLoadPromise = (async () => {
+    const vision = await getVision();
+    const hl = await HandLandmarker.createFromOptions(vision, {
+      baseOptions: { modelAssetPath: HAND_MODEL_URL, delegate: 'GPU' },
+      runningMode: 'VIDEO',
+      numHands: 2
+    });
+    handLandmarker = hl;
+    handStatusEl.textContent = 'Hand model ready (up to 2 hands).';
+    return hl;
+  })();
+  try {
+    return await handLoadPromise;
+  } catch (err) {
+    handLoadPromise = null;
+    handStatusEl.textContent = 'Hand model failed to load: ' + err.message;
+    console.error('Hand landmarker failed:', err);
+    return null;
+  }
+}
+
 const freezeToggle = document.getElementById('freezeToggle');
 const freezeBadge = document.getElementById('freezeBadge');
 function toggleFreeze() {
@@ -406,8 +591,7 @@ function toggleFreeze() {
   freezeBadge.style.display = frozen ? 'block' : 'none';
   if (frozen) {
     cancelAnimationFrame(animId);
-    const isWireframe = document.getElementById('wireframeToggle').checked;
-    if (isWireframe) {
+    if (!showCamera) {
       frozenImageData = null;
     } else {
       // Capture the current video frame for the frozen background
@@ -425,8 +609,7 @@ function toggleFreeze() {
     draw();
   } else {
     frozenImageData = null;
-    const isWireframe = document.getElementById('wireframeToggle').checked;
-    videoEl.style.opacity = isWireframe ? '0' : '1';
+    updateCameraVisibility();
     detect();
   }
 }
@@ -442,6 +625,8 @@ document.addEventListener('keydown', e => {
 const THEME_KEY = 'fme-theme';
 const DEFAULT_COLORS = {};
 for (const [key, val] of Object.entries(REGIONS)) DEFAULT_COLORS[key] = val.color;
+const DEFAULT_HAND_COLORS = {};
+for (const [key, val] of Object.entries(HAND_REGIONS)) DEFAULT_HAND_COLORS[key] = val.color;
 
 const CSS_VAR_MAP = {
   eyes: '--eye-color', iris: '--iris-color', eyebrows: '--brow-color',
@@ -459,14 +644,30 @@ function applyRegionColor(key, color) {
   if (CSS_VAR_MAP[key]) document.documentElement.style.setProperty(CSS_VAR_MAP[key], color);
 }
 
+function applyHandRegionColor(key, color) {
+  HAND_REGIONS[key].color = color;
+  for (let i = 0; i < handIndexToRegion.length; i++) {
+    if (handIndexToRegion[i].key === key) handIndexToRegion[i].color = color;
+  }
+  const btn = document.querySelector(`#handRegionToggles .region-btn[data-hand-region="${key}"]`);
+  if (btn) {
+    const on = activeHandRegions.has(key);
+    btn.style.borderColor = color;
+    btn.style.background = on ? color : 'transparent';
+    btn.style.color = on ? '#fff' : color;
+  }
+}
+
 let _saveTimer;
 function saveTheme() {
   clearTimeout(_saveTimer);
   _saveTimer = setTimeout(() => {
     const colors = {};
     for (const key of Object.keys(REGIONS)) colors[key] = REGIONS[key].color;
+    const handColors = {};
+    for (const key of Object.keys(HAND_REGIONS)) handColors[key] = HAND_REGIONS[key].color;
     try {
-      localStorage.setItem(THEME_KEY, JSON.stringify({ colors, glow: glowEnabled, glowIntensity, dotSize }));
+      localStorage.setItem(THEME_KEY, JSON.stringify({ colors, handColors, glow: glowEnabled, glowIntensity, dotSize }));
     } catch {}
   }, 300);
 }
@@ -479,6 +680,14 @@ function loadTheme() {
       for (const [key, color] of Object.entries(saved.colors)) {
         if (REGIONS[key]) applyRegionColor(key, color);
       }
+    }
+    if (saved.handColors) {
+      for (const [key, color] of Object.entries(saved.handColors)) {
+        if (HAND_REGIONS[key]) applyHandRegionColor(key, color);
+      }
+      handThemeGrid.querySelectorAll('input[type="color"]').forEach(input => {
+        input.value = HAND_REGIONS[input.dataset.handRegion].color;
+      });
     }
     if (saved.glow !== undefined) {
       glowEnabled = saved.glow;
@@ -515,6 +724,24 @@ for (const [key, val] of Object.entries(REGIONS)) {
   div.appendChild(input);
   div.appendChild(document.createTextNode(val.label));
   themeGrid.appendChild(div);
+}
+
+const handThemeGrid = document.getElementById('handThemeGrid');
+for (const [key, val] of Object.entries(HAND_REGIONS)) {
+  const div = document.createElement('div');
+  div.className = 'theme-swatch';
+  const input = document.createElement('input');
+  input.type = 'color';
+  input.value = val.color;
+  input.dataset.handRegion = key;
+  input.addEventListener('input', e => {
+    applyHandRegionColor(key, e.target.value);
+    saveTheme();
+    if (frozen) draw();
+  });
+  div.appendChild(input);
+  div.appendChild(document.createTextNode(val.label));
+  handThemeGrid.appendChild(div);
 }
 
 // Theme panel toggle
@@ -556,6 +783,9 @@ document.getElementById('themeReset').addEventListener('click', () => {
   for (const [key, color] of Object.entries(DEFAULT_COLORS)) {
     applyRegionColor(key, color);
   }
+  for (const [key, color] of Object.entries(DEFAULT_HAND_COLORS)) {
+    applyHandRegionColor(key, color);
+  }
   glowEnabled = false;
   glowIntensity = 14;
   dotSize = 3;
@@ -567,6 +797,9 @@ document.getElementById('themeReset').addEventListener('click', () => {
   document.getElementById('dotSizeValue').textContent = '3';
   themeGrid.querySelectorAll('input[type="color"]').forEach(input => {
     input.value = DEFAULT_COLORS[input.dataset.region];
+  });
+  handThemeGrid.querySelectorAll('input[type="color"]').forEach(input => {
+    input.value = DEFAULT_HAND_COLORS[input.dataset.handRegion];
   });
   try { localStorage.removeItem(THEME_KEY); } catch {}
   if (frozen) draw();
@@ -593,9 +826,23 @@ const resetBtn = document.getElementById('resetSelected');
 const selectRegionBtn = document.getElementById('selectRegionBtn');
 
 copyBtn.addEventListener('click', () => {
-  if (pinnedIndices.size === 0) return;
+  if (pinnedIndices.size === 0 && pinnedHands.size === 0) return;
   const indices = [...pinnedIndices].sort((a, b) => a - b);
-  navigator.clipboard.writeText(`[${indices.join(', ')}]`).then(() => {
+  let text;
+  if (pinnedHands.size === 0) {
+    text = `[${indices.join(', ')}]`;   // face-only output stays as it was
+  } else {
+    const hands = {};
+    for (const pin of pinnedHands.values()) {
+      (hands[pin.handKey] = hands[pin.handKey] || []).push(pin.idx);
+    }
+    for (const k of Object.keys(hands)) hands[k].sort((a, b) => a - b);
+    const payload = {};
+    if (indices.length) payload.face = indices;
+    payload.hands = hands;
+    text = JSON.stringify(payload);
+  }
+  navigator.clipboard.writeText(text).then(() => {
     const prev = copyBtn.textContent;
     copyBtn.textContent = 'Copied!';
     copyBtn.classList.add('copied');
@@ -605,7 +852,10 @@ copyBtn.addEventListener('click', () => {
 
 resetBtn.addEventListener('click', () => {
   pinnedIndices.clear();
+  pinnedHands.clear();
   updatePinnedList();
+  updateSelectRegionBtn();
+  if (frozen) draw();
 });
 
 const allRegionKeys = Object.keys(REGIONS);
@@ -614,6 +864,41 @@ const allBtn = document.querySelector('.region-btn[data-region="all"]');
 function syncAllBtn() {
   const allActive = allRegionKeys.every(k => activeRegions.has(k));
   allBtn.classList.toggle('active', allActive);
+}
+
+const handRegionTogglesEl = document.getElementById('handRegionToggles');
+for (const [key, val] of Object.entries(HAND_REGIONS)) {
+  const btn = document.createElement('button');
+  btn.className = 'region-btn';
+  btn.dataset.handRegion = key;
+  btn.textContent = val.label;
+  btn.style.borderColor = val.color;
+  btn.style.color = val.color;
+  btn.setAttribute('aria-pressed', 'false');
+  btn.addEventListener('click', () => {
+    const on = !activeHandRegions.has(key);
+    if (on) activeHandRegions.add(key); else activeHandRegions.delete(key);
+    btn.classList.toggle('active', on);
+    btn.style.background = on ? val.color : 'transparent';
+    btn.style.color = on ? '#fff' : val.color;
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    updateSelectRegionBtn();
+    if (frozen) draw();
+  });
+  handRegionTogglesEl.appendChild(btn);
+}
+
+// Live hands crossed with the active finger regions.
+function getHandTargets() {
+  if (activeHandRegions.size === 0) return [];
+  const idxs = new Set();
+  for (const key of activeHandRegions) for (const i of HAND_REGIONS[key].indices) idxs.add(i);
+  const out = [];
+  for (let slot = 0; slot < handResults.length; slot++) {
+    const handKey = handKeyOf(handResults[slot], slot);
+    for (const i of idxs) out.push({ key: handKey + '#' + i, handKey, idx: i });
+  }
+  return out;
 }
 
 function getRegionIndices() {
@@ -630,27 +915,43 @@ function areAllSelected(indices) {
 }
 
 function updateSelectRegionBtn() {
-  if (activeRegions.size === 0) {
+  const { keys, indices } = getRegionIndices();
+  const handTargets = getHandTargets();
+  if (indices.length === 0 && handTargets.length === 0) {
     selectRegionBtn.classList.remove('visible');
     return;
   }
-  const { keys, indices } = getRegionIndices();
-  const allSelected = areAllSelected(indices);
+  const allSelected = (indices.length === 0 || areAllSelected(indices))
+    && (handTargets.length === 0 || handTargets.every(t => pinnedHands.has(t.key)));
   const verb = allSelected ? 'Deselect' : 'Select';
   const isAll = allRegionKeys.every(k => activeRegions.has(k));
-  const label = isAll
-    ? 'all region'
-    : keys.map(key => REGIONS[key] ? REGIONS[key].label : key).join(' + ');
-  selectRegionBtn.textContent = `${verb} ${indices.length} ${label} points`;
+  const parts = [];
+  if (indices.length) {
+    const label = isAll
+      ? 'all region'
+      : keys.map(key => REGIONS[key] ? REGIONS[key].label : key).join(' + ');
+    parts.push(`${indices.length} ${label} points`);
+  }
+  if (handTargets.length) {
+    const label = [...activeHandRegions].map(k => HAND_REGIONS[k].label).join(' + ');
+    parts.push(`${handTargets.length} ${label} hand points`);
+  }
+  selectRegionBtn.textContent = `${verb} ${parts.join(' + ')}`;
   selectRegionBtn.classList.add('visible');
 }
 
 selectRegionBtn.addEventListener('click', () => {
   const { indices } = getRegionIndices();
-  const allSelected = areAllSelected(indices);
+  const handTargets = getHandTargets();
+  const allSelected = (indices.length === 0 || areAllSelected(indices))
+    && (handTargets.length === 0 || handTargets.every(t => pinnedHands.has(t.key)));
   for (const i of indices) {
     if (allSelected) pinnedIndices.delete(i);
     else pinnedIndices.add(i);
+  }
+  for (const t of handTargets) {
+    if (allSelected) pinnedHands.delete(t.key);
+    else pinnedHands.set(t.key, { handKey: t.handKey, idx: t.idx });
   }
   updatePinnedList();
   updateSelectRegionBtn();
@@ -697,17 +998,31 @@ canvasEl.addEventListener('mousemove', e => {
   const cy = (e.clientY - rect.top - offsetY) / scale;
   mouseX = 1 - (cx / canvasEl.width);
   mouseY = cy / canvasEl.height;
+  heldHover = null;   // the cursor is back, live hovering takes over again
   if (frozen) draw();
 });
 
-canvasEl.addEventListener('mouseleave', () => { mouseX = -1; mouseY = -1; hoveredIdx = -1; hideTooltip(); if (frozen) draw(); });
+canvasEl.addEventListener('mouseleave', () => {
+  heldHover = lastHover;
+  mouseX = -1; mouseY = -1; hoveredIdx = -1; hoveredHand = null; lastHover = null;
+  hideTooltip();
+  if (frozen) draw();
+});
 
 canvasEl.addEventListener('click', () => {
-  if (hoveredIdx < 0) return;
-  if (pinnedIndices.has(hoveredIdx)) pinnedIndices.delete(hoveredIdx);
-  else { pinnedIndices.add(hoveredIdx); }
+  if (hoveredHand) {
+    const key = hoveredHand.handKey + '#' + hoveredHand.idx;
+    if (pinnedHands.has(key)) pinnedHands.delete(key);
+    else pinnedHands.set(key, { handKey: hoveredHand.handKey, idx: hoveredHand.idx });
+  } else if (hoveredIdx >= 0) {
+    if (pinnedIndices.has(hoveredIdx)) pinnedIndices.delete(hoveredIdx);
+    else pinnedIndices.add(hoveredIdx);
+  } else {
+    return;
+  }
   document.getElementById('clickHint').style.display = 'none';
   updatePinnedList();
+  updateSelectRegionBtn();
   if (frozen) draw();
 });
 
@@ -741,6 +1056,7 @@ function onSearch(e) {
   const q = e.target.value.trim().toLowerCase();
   const feedback = document.getElementById('searchFeedback');
   searchHighlight.clear();
+  handSearchHighlight.clear();
   if (!q) {
     feedback.style.display = 'none';
     clearSearchFilters();
@@ -751,11 +1067,15 @@ function onSearch(e) {
     searchHighlight.add(num);
     clearSearchFilters();
     const region = indexToRegion[num];
+    if (showHands && num <= 20) handSearchHighlight.add(num);
     const isPinned = pinnedIndices.has(num);
     const selectHtml = isPinned
       ? `<span class="search-select-btn done">selected</span>`
       : `<button class="search-select-btn" id="searchSelectIdx">select</button>`;
-    feedback.innerHTML = `<span class="match-index">#${num}</span> - ${region ? `<span class="match-region" style="color:${region.color}">${region.label}</span>` : 'Mesh point'} ${selectHtml}`;
+    const handNote = (showHands && num <= 20)
+      ? ` <span style="opacity:0.8">/ hand <span class="match-region" style="color:${handIndexToRegion[num].color}">${HAND_NAMES[num]}</span></span>`
+      : '';
+    feedback.innerHTML = `<span class="match-index">#${num}</span> - ${region ? `<span class="match-region" style="color:${region.color}">${region.label}</span>` : 'Mesh point'}${handNote} ${selectHtml}`;
     feedback.style.display = 'block';
     const btn = document.getElementById('searchSelectIdx');
     if (btn) {
@@ -770,6 +1090,17 @@ function onSearch(e) {
   }
   const matchedKeys = [];
   const matchedRegions = [];
+  const matchedHand = [];
+  for (const [key, val] of Object.entries(HAND_REGIONS)) {
+    // name matching only looks at the points this region owns, so "pinky"
+    // does not drag in the palm just because PINKY_MCP sits in the knuckle row
+    const ownIndices = val.indices.filter(i => handIndexToRegion[i].key === key);
+    if (key.includes(q) || val.label.toLowerCase().includes(q) ||
+        ownIndices.some(i => HAND_NAMES[i].toLowerCase().includes(q.replace(/ /g, '_')))) {
+      val.indices.forEach(i => handSearchHighlight.add(i));
+      matchedHand.push(val);
+    }
+  }
   for (const [key, val] of Object.entries(REGIONS)) {
     if (key.includes(q) || val.label.toLowerCase().includes(q)) {
       val.indices.forEach(i => searchHighlight.add(i));
@@ -777,10 +1108,14 @@ function onSearch(e) {
       matchedRegions.push(val);
     }
   }
-  if (matchedRegions.length > 0) {
+  if (matchedRegions.length > 0 || matchedHand.length > 0) {
     applySearchFilters(matchedKeys);
     const parts = matchedRegions.map(r => `<span class="match-region" style="color:${r.color}">${r.label}</span> (${r.indices.length})`);
-    feedback.innerHTML = `${searchHighlight.size} landmarks: ${parts.join(', ')}`;
+    for (const r of matchedHand) {
+      parts.push(`<span class="match-region" style="color:${r.color}">${r.label}</span> hand (${r.indices.length})`);
+    }
+    const total = searchHighlight.size + (showHands ? handSearchHighlight.size : 0);
+    feedback.innerHTML = `${total} landmarks: ${parts.join(', ')}`;
     feedback.style.display = 'block';
   } else {
     clearSearchFilters();
@@ -794,15 +1129,29 @@ function onSearch(e) {
 function updatePinnedList() {
   const list = document.getElementById('pinnedList');
   const count = document.getElementById('pinnedCount');
-  count.textContent = pinnedIndices.size > 0 ? `(${pinnedIndices.size} selected)` : '';
-  copyBtn.textContent = `Copy indices (${pinnedIndices.size})`;
-  copyBtn.disabled = pinnedIndices.size === 0;
-  resetBtn.style.display = pinnedIndices.size > 0 ? '' : 'none';
-  if (pinnedIndices.size === 0) {
+  const total = pinnedIndices.size + pinnedHands.size;
+  count.textContent = total > 0 ? `(${total} selected)` : '';
+  copyBtn.textContent = `Copy indices (${total})`;
+  copyBtn.disabled = total === 0;
+  resetBtn.style.display = total > 0 ? '' : 'none';
+  if (total === 0) {
     list.innerHTML = '<li style="color:var(--text-muted);font-size:0.8rem;padding:6px 0;">No landmarks selected yet</li>';
     return;
   }
   list.innerHTML = '';
+  for (const [key, pin] of pinnedHands) {
+    const region = handIndexToRegion[pin.idx];
+    const li = document.createElement('li');
+    li.className = 'pinned-item';
+    li.innerHTML = `<span class="idx">#${pin.idx}</span>
+      <span class="region-tag" style="background:${region.color}22;color:${region.color}">${region.label} ${pin.handKey === 'Left' || pin.handKey === 'Right' ? pin.handKey[0] : ''}</span>
+      <button data-key="${key}">remove</button>`;
+    const drop = (e) => { if (e) e.stopPropagation(); pinnedHands.delete(key); updatePinnedList(); updateSelectRegionBtn(); if (frozen) draw(); };
+    li.querySelector('button').addEventListener('click', drop);
+    li.style.cursor = 'pointer';
+    li.addEventListener('click', () => drop());
+    list.appendChild(li);
+  }
   for (const idx of pinnedIndices) {
     const region = indexToRegion[idx];
     const li = document.createElement('li');
@@ -817,12 +1166,28 @@ function updatePinnedList() {
   }
 }
 
+function updateHandInspector(hover) {
+  const p = handResults[hover.slot] && handResults[hover.slot].landmarks[hover.idx];
+  if (!p) return;
+  const region = handIndexToRegion[hover.idx];
+  document.getElementById('infoIndex').textContent = hover.idx;
+  const infoRegion = document.getElementById('infoRegion');
+  infoRegion.textContent = `${region.label} (${handLabelOf(hover.handKey)})`;
+  infoRegion.style.color = region.color;
+  document.getElementById('infoNameRow').style.display = 'block';
+  document.getElementById('infoName').textContent = HAND_NAMES[hover.idx];
+  document.getElementById('infoX').textContent = p.x.toFixed(3);
+  document.getElementById('infoY').textContent = p.y.toFixed(3);
+  document.getElementById('infoZ').textContent = p.z.toFixed(3);
+}
+
 function updateInspector(idx) {
   const infoIndex = document.getElementById('infoIndex');
   const infoRegion = document.getElementById('infoRegion');
   const infoX = document.getElementById('infoX');
   const infoY = document.getElementById('infoY');
   const infoZ = document.getElementById('infoZ');
+  document.getElementById('infoNameRow').style.display = 'none';
   if (idx < 0 || !landmarks) {
     infoIndex.textContent = '--';
     infoRegion.textContent = '--';
@@ -841,15 +1206,6 @@ function updateInspector(idx) {
   infoZ.textContent = p.z.toFixed(3);
 }
 
-function showTooltip(idx, screenX, screenY) {
-  const tip = document.getElementById('tooltip');
-  const region = indexToRegion[idx];
-  tip.textContent = `#${idx}` + (region ? ` (${region.label})` : '');
-  tip.style.left = screenX + 'px';
-  tip.style.top = screenY + 'px';
-  tip.style.display = 'block';
-}
-
 function hideTooltip() {
   document.getElementById('tooltip').style.display = 'none';
 }
@@ -861,12 +1217,10 @@ async function startCamera() {
   statusBar.textContent = 'Loading model...';
 
   try {
-    const vision = await FilesetResolver.forVisionTasks(
-      'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm'
-    );
+    const vision = await getVision();
     faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
       baseOptions: {
-        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
+        modelAssetPath: FACE_MODEL_URL,
         delegate: 'GPU'
       },
       runningMode: 'VIDEO',
@@ -883,6 +1237,7 @@ async function startCamera() {
     statusBar.textContent = 'Detecting...';
     setTimeout(() => { statusBar.style.display = 'none'; }, 2000);
     document.getElementById('clickHint').style.display = 'block';
+    if (showHands) await ensureHandLandmarker();
     detect();
   } catch (err) {
     statusBar.style.display = 'none';
@@ -910,176 +1265,547 @@ async function startCamera() {
   }
 }
 
+let detectWarned = false;
+
 function detect() {
-  const result = faceLandmarker.detectForVideo(videoEl, performance.now());
-  if (result.faceLandmarks.length > 0) {
-    landmarks = result.faceLandmarks[0];
-    draw();
+  // A frame can be momentarily unavailable (camera switch, tab wake). Skipping
+  // it keeps one bad frame from tearing down the whole tracking loop.
+  if (!videoEl.videoWidth || videoEl.readyState < 2) {
+    animId = requestAnimationFrame(detect);
+    return;
   }
+
+  const ts = performance.now();
+  const canRunHands = showHands && !!handLandmarker;
+
+  // Simple scheduler: with hands enabled, face and hands take alternating
+  // frames so two models share one requestAnimationFrame loop.
+  const doFace = !canRunHands || (detectTick % 2 === 0);
+  const doHands = canRunHands && (detectTick % 2 === 1);
+  detectTick++;
+
+  try {
+    if (doFace) {
+      const result = faceLandmarker.detectForVideo(videoEl, ts);
+      if (result.faceLandmarks.length > 0) landmarks = result.faceLandmarks[0];
+    }
+    if (doHands) {
+      const res = handLandmarker.detectForVideo(videoEl, ts);
+      const hands = res.landmarks || [];
+      // Replaced wholesale every hand frame, so hands that left the frame
+      // cannot leave a stale skeleton behind.
+      handResults = hands.map((lm, i) => ({
+        landmarks: lm,
+        handedness: displayHandedness(
+          (res.handednesses && res.handednesses[i] && res.handednesses[i][0])
+            ? res.handednesses[i][0].categoryName : '')
+      }));
+    }
+  } catch (err) {
+    if (!detectWarned) { detectWarned = true; console.warn('Detection frame skipped:', err); }
+  }
+  if (!showHands && handResults.length) handResults = [];
+
+  draw();
   animId = requestAnimationFrame(detect);
 }
 
 function draw() {
-  const w = canvasEl.width;
-  const h = canvasEl.height;
+  renderFrame(ctx, canvasEl.width, canvasEl.height, { interactive: true });
+}
+
+// Nearest landmark to the cursor across both models, so a hand point and a
+// face point never fight over the same pixel.
+function findHover() {
+  if (mouseX < 0) return null;
+  let best = null;
+  let bestDist = 0.03;
+
+  if (showFace && landmarks) {
+    for (let i = 0; i < landmarks.length; i++) {
+      const dx = landmarks[i].x - mouseX, dy = landmarks[i].y - mouseY;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d < bestDist) { bestDist = d; best = { type: 'face', idx: i }; }
+    }
+  }
+  if (showHands) {
+    for (let slot = 0; slot < handResults.length; slot++) {
+      const lm = handResults[slot].landmarks;
+      for (let i = 0; i < lm.length; i++) {
+        const dx = lm[i].x - mouseX, dy = lm[i].y - mouseY;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        if (d < bestDist) {
+          bestDist = d;
+          best = { type: 'hand', slot, idx: i, handKey: handKeyOf(handResults[slot], slot) };
+        }
+      }
+    }
+  }
+  return best;
+}
+
+// Draws one frame of overlays into any 2d context. `interactive` adds the
+// hover marker, index labels, pinned rings and tooltip; the capture pass
+// turns it off so the exported image holds landmarks only.
+function renderFrame(ctx, w, h, opts) {
+  const interactive = !!(opts && opts.interactive);
+  // chrome = hover marker, pinned rings and index labels. On for the live
+  // canvas; on for the export only when "Include labels in capture" is ticked.
+  const chrome = opts && opts.chrome !== undefined ? !!opts.chrome : interactive;
+  // The export spells the hovered point out in full, the live canvas keeps
+  // the terse index it has always shown.
+  const detailed = chrome && !interactive;
   ctx.clearRect(0, 0, w, h);
 
-  if (frozen && frozenImageData) {
+  if (interactive && frozen && frozenImageData) {
     ctx.save();
     ctx.scale(-1, 1);
     ctx.drawImage(frozenImageData, -w, 0, w, h);
     ctx.restore();
   }
 
-  if (!landmarks) return;
+  const live = (interactive || chrome) ? findHover() : null;
+  // Markers fall back to the held point; the tooltip and inspector follow the
+  // live cursor only.
+  const hover = live || heldHover;
+  drawHands(ctx, w, h);
 
-  if (showMesh) {
-    const drawingUtils = new DrawingUtils(ctx);
-    drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, { color: 'rgba(255,255,255,0.2)', lineWidth: 1 });
+  const closestIdx = (hover && hover.type === 'face') ? hover.idx : -1;
+
+
+  if (showFace && landmarks) {
+    if (showMesh && showConnections) {
+      const drawingUtils = new DrawingUtils(ctx);
+      drawingUtils.drawConnectors(landmarks, FaceLandmarker.FACE_LANDMARKS_TESSELATION, {
+        color: showCamera ? 'rgba(255,255,255,0.2)' : WIREFRAME_FACE_COLOR,
+        lineWidth: 1
+      });
+    }
+
+    const noFilter = activeRegions.size === 0;
+    const hoveredRegion = (noFilter && closestIdx >= 0) ? indexToRegion[closestIdx] : null;
+
+    if (showPoints) {
+      for (let i = 0; i < landmarks.length; i++) {
+        const p = landmarks[i];
+        const region = indexToRegion[i];
+        const isInActiveRegion = region && activeRegions.has(region.key);
+        const isInHoveredRegion = hoveredRegion && region && region.key === hoveredRegion.key;
+        const isSearched = searchHighlight.size > 0 ? searchHighlight.has(i) : true;
+        const isPinned = interactive && pinnedIndices.has(i);
+
+        const isSearchMatch = searchHighlight.size > 0 && searchHighlight.has(i);
+        if (!isInActiveRegion && !isPinned && !isInHoveredRegion && !isSearchMatch && i !== closestIdx) continue;
+
+        const x = p.x * w;
+        const y = p.y * h;
+
+        let radius = dotSize;
+        let color = 'rgba(255,255,255,0.3)';
+        let alpha = isSearched ? 1 : 0.15;
+
+        if (region) color = region.color;
+        if (isInHoveredRegion && !isInActiveRegion) { alpha = 0.85; radius = dotSize * 1.5; }
+        if (isPinned) { radius = dotSize * 2.5; alpha = 1; }
+
+        ctx.globalAlpha = alpha;
+
+        if (glowEnabled) {
+          ctx.shadowColor = 'transparent';
+          ctx.shadowBlur = 0;
+          ctx.beginPath();
+          ctx.arc(x, y, radius + glowIntensity * 0.4, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.globalAlpha = alpha * 0.1;
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(x, y, radius + glowIntensity * 0.2, 0, Math.PI * 2);
+          ctx.globalAlpha = alpha * 0.2;
+          ctx.fill();
+          ctx.globalAlpha = alpha;
+          ctx.shadowColor = color;
+          ctx.shadowBlur = glowIntensity;
+        }
+
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        if (glowEnabled) { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; }
+      }
+    }
+
   }
 
-  let closestIdx = -1;
-  let closestDist = 0.03;
-  const noFilter = activeRegions.size === 0;
+  if (chrome) drawChrome(ctx, w, h, hover, detailed);
 
-  // First pass: find closest point to cursor (always scan all landmarks)
-  if (mouseX >= 0) {
-    for (let i = 0; i < landmarks.length; i++) {
-      const p = landmarks[i];
-      const dx = p.x - mouseX;
-      const dy = p.y - mouseY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < closestDist) {
-        closestDist = dist;
-        closestIdx = i;
+  ctx.globalAlpha = 1;
+  if (!interactive) return;
+
+  if (live) showHoverTooltip(live, w, h);
+  else hideTooltip();
+
+  syncHoverState(live);
+}
+
+// White text with a dark outline: readable over skin, mesh or black alike.
+function drawLabel(ctx, text, x, y, font) {
+  ctx.font = font;
+  ctx.textAlign = 'center';
+  ctx.lineJoin = 'round';
+  ctx.lineWidth = 3;
+  ctx.strokeStyle = 'rgba(0,0,0,0.75)';
+  ctx.strokeText(text, x, y);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(text, x, y);
+}
+
+function drawHoverMarker(ctx, p, w, h, label, force) {
+  const x = p.x * w, y = p.y * h;
+  ctx.globalAlpha = 1;
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(250,204,21,0.25)';
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, 5, 0, Math.PI * 2);
+  ctx.fillStyle = '#facc15';
+  ctx.fill();
+  if (showLabels || force) {
+    ctx.save();
+    ctx.scale(-1, 1);
+    drawLabel(ctx, label, -x, y - 14, 'bold 11px monospace');
+    ctx.restore();
+  }
+}
+
+function drawPinnedMarker(ctx, p, w, h, label, force) {
+  const x = p.x * w, y = p.y * h;
+  if (glowEnabled) { ctx.shadowColor = '#facc15'; ctx.shadowBlur = glowIntensity; }
+  ctx.beginPath();
+  ctx.arc(x, y, dotSize * 3, 0, Math.PI * 2);
+  ctx.strokeStyle = '#facc15';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+  if (showLabels || force) {
+    ctx.save();
+    ctx.scale(-1, 1);
+    drawLabel(ctx, label, -x, y - 16, 'bold 12px monospace');
+    ctx.restore();
+  }
+}
+
+function showHoverTooltip(hover, w, h) {
+  const p = hover.type === 'face'
+    ? landmarks[hover.idx]
+    : handResults[hover.slot] && handResults[hover.slot].landmarks[hover.idx];
+  if (!p) { hideTooltip(); return; }
+  const rect = canvasEl.getBoundingClientRect();
+  const scale = Math.max(rect.width / canvasEl.width, rect.height / canvasEl.height);
+  const offsetX = (rect.width - canvasEl.width * scale) / 2;
+  const offsetY = (rect.height - canvasEl.height * scale) / 2;
+  const screenX = offsetX + (1 - p.x) * canvasEl.width * scale;
+  const screenY = offsetY + p.y * canvasEl.height * scale;
+  const tip = document.getElementById('tooltip');
+  if (hover.type === 'face') {
+    const region = indexToRegion[hover.idx];
+    tip.textContent = `#${hover.idx}` + (region ? ` (${region.label})` : '');
+  } else {
+    tip.textContent = `#${hover.idx} ${HAND_NAMES[hover.idx]} - ${handLabelOf(hover.handKey)}`;
+  }
+  tip.style.left = screenX + 'px';
+  tip.style.top = screenY + 'px';
+  tip.style.display = 'block';
+}
+
+function sameHover(a, b) {
+  if (!a || !b) return a === b;
+  if (a.type !== b.type) return false;
+  return a.type === 'face' ? a.idx === b.idx : (a.idx === b.idx && a.handKey === b.handKey);
+}
+
+let lastHover = null;
+function syncHoverState(hover) {
+  if (sameHover(hover, lastHover)) return;
+  lastHover = hover;
+  hoveredIdx = (hover && hover.type === 'face') ? hover.idx : -1;
+  hoveredHand = (hover && hover.type === 'hand') ? hover : null;
+  if (hover) {
+    if (hover.type === 'face') { selectedIdx = hover.idx; updateInspector(hover.idx); }
+    else updateHandInspector(hover);
+  }
+}
+
+// ---- Hands ----
+// Topology comes straight from the MediaPipe task class, so the skeleton is
+// the official 21-point hand graph rather than a hand-rolled approximation.
+function drawHands(ctx, w, h) {
+  if (!showHands || handResults.length === 0) return;
+  const connections = HandLandmarker.HAND_CONNECTIONS || [];
+  const filtered = activeHandRegions.size > 0;
+  const activeIdx = new Set();
+  if (filtered) {
+    for (const key of activeHandRegions) for (const i of HAND_REGIONS[key].indices) activeIdx.add(i);
+  }
+  const searching = handSearchHighlight.size > 0;
+  const emphasis = i => {
+    if (filtered && !activeIdx.has(i)) return 0.22;
+    if (searching && !handSearchHighlight.has(i)) return 0.22;
+    return 1;
+  };
+
+  for (let slot = 0; slot < handResults.length; slot++) {
+    const hand = handResults[slot];
+    const lm = hand.landmarks;
+    if (!lm || lm.length === 0) continue;
+    const handKey = handKeyOf(hand, slot);
+
+    if (showConnections) {
+      ctx.save();
+      ctx.lineWidth = 1.6;
+      ctx.lineCap = 'round';
+      for (const conn of connections) {
+        const a = lm[conn.start], b = lm[conn.end];
+        if (!a || !b) continue;
+        const region = handIndexToRegion[conn.end] || handIndexToRegion[conn.start];
+        ctx.strokeStyle = region.color;
+        ctx.globalAlpha = 0.8 * Math.min(emphasis(conn.start), emphasis(conn.end));
+        if (glowEnabled) { ctx.shadowColor = region.color; ctx.shadowBlur = glowIntensity; }
+        ctx.beginPath();
+        ctx.moveTo(a.x * w, a.y * h);
+        ctx.lineTo(b.x * w, b.y * h);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    if (showPoints) {
+      ctx.save();
+      for (let i = 0; i < lm.length; i++) {
+        const x = lm[i].x * w, y = lm[i].y * h;
+        const region = handIndexToRegion[i];
+        const color = region.color;
+        const alpha = emphasis(i);
+        const radius = FINGER_TIPS.has(i) ? dotSize * 1.4 : dotSize;
+        ctx.globalAlpha = alpha * 0.18;
+        ctx.beginPath();
+        ctx.arc(x, y, radius + (glowEnabled ? glowIntensity * 0.35 : 3), 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.globalAlpha = alpha;
+        if (glowEnabled) { ctx.shadowColor = color; ctx.shadowBlur = glowIntensity; }
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+      }
+      ctx.restore();
+    }
+
+  }
+  ctx.globalAlpha = 1;
+}
+
+// Markers and labels go on last, after both hands and the face mesh, so
+// nothing is ever drawn over a label.
+function drawChrome(ctx, w, h, hover, detailed) {
+  ctx.globalAlpha = 1;
+
+  if (showFace && landmarks) {
+    for (const idx of pinnedIndices) {
+      if (idx >= landmarks.length) continue;
+      drawPinnedMarker(ctx, landmarks[idx], w, h, idx, detailed);
+    }
+  }
+
+  if (showHands) {
+    for (let slot = 0; slot < handResults.length; slot++) {
+      const lm = handResults[slot].landmarks;
+      if (!lm) continue;
+      const handKey = handKeyOf(handResults[slot], slot);
+      for (let i = 0; i < lm.length; i++) {
+        if (pinnedHands.has(handKey + '#' + i)) drawPinnedMarker(ctx, lm[i], w, h, i, detailed);
       }
     }
   }
 
-  // Determine hovered region for unfiltered highlight
-  const hoveredRegion = (noFilter && closestIdx >= 0) ? indexToRegion[closestIdx] : null;
+  if (!hover) return;
+  if (hover.type === 'face' && showFace && landmarks) {
+    const region = indexToRegion[hover.idx];
+    const label = detailed && region ? `#${hover.idx} ${region.label}` : hover.idx;
+    drawHoverMarker(ctx, landmarks[hover.idx], w, h, label, detailed);
+  } else if (hover.type === 'hand') {
+    const hand = handResults[hover.slot];
+    if (!hand) return;
+    const label = detailed ? `#${hover.idx} ${HAND_NAMES[hover.idx]}` : hover.idx;
+    drawHoverMarker(ctx, hand.landmarks[hover.idx], w, h, label, detailed);
+  }
+}
 
-  // Second pass: draw landmarks
-  for (let i = 0; i < landmarks.length; i++) {
-    const p = landmarks[i];
-    const region = indexToRegion[i];
-    const isInActiveRegion = region && activeRegions.has(region.key);
-    const isInHoveredRegion = hoveredRegion && region && region.key === hoveredRegion.key;
-    const isSearched = searchHighlight.size > 0 ? searchHighlight.has(i) : true;
-    const isPinned = pinnedIndices.has(i);
+// ---- Capture ----
+// Three second countdown so both hands can be in frame before the shot.
+// The counter is a DOM overlay, never part of the exported canvas.
+const countdownEl = document.getElementById('countdown');
+const countdownNumEl = countdownEl.querySelector('span');
+let countdownTimer = null;
 
-    const isSearchMatch = searchHighlight.size > 0 && searchHighlight.has(i);
-    if (!isInActiveRegion && !isPinned && !isInHoveredRegion && !isSearchMatch && i !== closestIdx) continue;
+function cancelCountdown() {
+  clearInterval(countdownTimer);
+  countdownTimer = null;
+  countdownEl.classList.remove('visible');
+  captureBtnEl.textContent = 'Capture PNG ' + CAPTURE_W + ' x ' + CAPTURE_H;
+}
 
-    const x = p.x * w;
-    const y = p.y * h;
+function startCaptureCountdown(seconds) {
+  if (!canvasEl.width || !canvasEl.height) {
+    handStatusEl.textContent = 'Start the camera before capturing.';
+    return;
+  }
+  let left = seconds;
+  const tick = () => {
+    countdownNumEl.textContent = left;
+    // restart the pop animation on every number
+    countdownNumEl.style.animation = 'none';
+    void countdownNumEl.offsetWidth;
+    countdownNumEl.style.animation = '';
+    countdownEl.classList.add('visible');
+    captureBtnEl.textContent = 'Capturing in ' + left + '... (click to cancel)';
+  };
+  tick();
+  countdownTimer = setInterval(() => {
+    left--;
+    if (left > 0) { tick(); return; }
+    cancelCountdown();
+    capturePNG();
+  }, 1000);
+}
 
-    let radius = dotSize;
-    let color = 'rgba(255,255,255,0.3)';
-    let alpha = isSearched ? 1 : 0.15;
+document.addEventListener('keydown', e => {
+  if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
+  if (e.key === 'Escape' && countdownTimer) cancelCountdown();
+  // Capturing from the keyboard keeps the cursor where it is, so whatever you
+  // are hovering is still hovered when the shot fires.
+  else if ((e.key === 'c' || e.key === 'C') && !countdownTimer) startCaptureCountdown(3);
+});
 
-    if (region) color = region.color;
-    if (isInHoveredRegion && !isInActiveRegion) { alpha = 0.85; radius = dotSize * 1.5; }
-    if (isPinned) { radius = dotSize * 2.5; alpha = 1; }
-
-    ctx.globalAlpha = alpha;
-
-    if (glowEnabled) {
-      // Draw a larger soft glow pass first
-      ctx.shadowColor = 'transparent';
-      ctx.shadowBlur = 0;
-      ctx.beginPath();
-      ctx.arc(x, y, radius + glowIntensity * 0.4, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.globalAlpha = alpha * 0.1;
-      ctx.fill();
-      // Medium glow
-      ctx.beginPath();
-      ctx.arc(x, y, radius + glowIntensity * 0.2, 0, Math.PI * 2);
-      ctx.globalAlpha = alpha * 0.2;
-      ctx.fill();
-      ctx.globalAlpha = alpha;
-      ctx.shadowColor = color;
-      ctx.shadowBlur = glowIntensity;
-    }
-
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-
-    if (glowEnabled) { ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0; }
+function capturePNG() {
+  const srcW = canvasEl.width, srcH = canvasEl.height;
+  if (!srcW || !srcH) {
+    handStatusEl.textContent = 'Start the camera before capturing.';
+    return;
   }
 
-  if (closestIdx >= 0) {
-    const p = landmarks[closestIdx];
-    const x = p.x * w;
-    const y = p.y * h;
+  // Overlays are re-rendered at source resolution without any interactive chrome.
+  const layer = document.createElement('canvas');
+  layer.width = srcW;
+  layer.height = srcH;
+  renderFrame(layer.getContext('2d'), srcW, srcH, { interactive: false, chrome: labelsInCapture });
+
+  const out = document.createElement('canvas');
+  out.width = CAPTURE_W;
+  out.height = CAPTURE_H;
+  const o = out.getContext('2d');
+  o.fillStyle = '#070b14';
+  o.fillRect(0, 0, CAPTURE_W, CAPTURE_H);
+
+  const scale = Math.max(CAPTURE_W / srcW, CAPTURE_H / srcH);
+  const dw = srcW * scale, dh = srcH * scale;
+  const dx = (CAPTURE_W - dw) / 2, dy = (CAPTURE_H - dh) / 2;
+
+  if (showCamera) {
+    if (frozen && frozenImageData) {
+      // frozenImageData was stored already mirrored
+      o.drawImage(frozenImageData, dx, dy, dw, dh);
+    } else {
+      o.save();
+      o.translate(CAPTURE_W, 0);
+      o.scale(-1, 1);
+      try { o.drawImage(videoEl, dx, dy, dw, dh); } catch (e) {}
+      o.restore();
+    }
+  }
+
+  // Mirrored to match what the preview shows (the live canvas is CSS-mirrored).
+  o.save();
+  o.translate(CAPTURE_W, 0);
+  o.scale(-1, 1);
+  o.drawImage(layer, dx, dy, dw, dh);
+  o.restore();
+
+  if (showDownloadOverlay) drawDownloadOverlay(o, CAPTURE_W, CAPTURE_H);
+
+  out.toBlob(blob => {
+    if (!blob) { handStatusEl.textContent = 'Capture failed.'; return; }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'mediapipe-landmarks-1200x630.png';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    handStatusEl.textContent = 'Captured ' + CAPTURE_W + ' x ' + CAPTURE_H + ' PNG.';
+  }, 'image/png');
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+// Minimal, optional file-card treatment: names the two model files the blog
+// post is about without a headline or any Google/MediaPipe branding.
+function drawDownloadOverlay(ctx, w, h) {
+  const cards = [
+    { name: 'face_landmarker.task', color: '#2dd4bf' },
+    { name: 'hand_landmarker.task', color: HAND_COLOR_LEFT }
+  ];
+  const cardW = 320, cardH = 54, gap = 14, x = 56;
+  let y = h - 56 - (cards.length * cardH + (cards.length - 1) * gap);
+
+  ctx.save();
+  for (const card of cards) {
     ctx.globalAlpha = 1;
-
-    ctx.beginPath();
-    ctx.arc(x, y, 10, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(250,204,21,0.25)';
+    ctx.fillStyle = 'rgba(8,14,24,0.72)';
+    roundRect(ctx, x, y, cardW, cardH, 10);
     ctx.fill();
-
-    ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = '#facc15';
-    ctx.fill();
-
-    if (showLabels) {
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 11px monospace';
-      ctx.textAlign = 'center';
-      ctx.save();
-      ctx.scale(-1, 1);
-      ctx.fillText(closestIdx, -x, y - 14);
-      ctx.restore();
-    }
-
-    const rect = canvasEl.getBoundingClientRect();
-    const scale = Math.max(rect.width / canvasEl.width, rect.height / canvasEl.height);
-    const offsetX = (rect.width - canvasEl.width * scale) / 2;
-    const offsetY = (rect.height - canvasEl.height * scale) / 2;
-    const screenX = offsetX + (1 - p.x) * canvasEl.width * scale;
-    const screenY = offsetY + p.y * canvasEl.height * scale;
-    showTooltip(closestIdx, screenX, screenY);
-  } else {
-    hideTooltip();
-  }
-
-  ctx.globalAlpha = 1;
-
-  for (const idx of pinnedIndices) {
-    if (idx >= landmarks.length) continue;
-    const p = landmarks[idx];
-    const x = p.x * w;
-    const y = p.y * h;
-    if (glowEnabled) { ctx.shadowColor = '#facc15'; ctx.shadowBlur = glowIntensity; }
-    ctx.beginPath();
-    ctx.arc(x, y, dotSize * 3, 0, Math.PI * 2);
-    ctx.strokeStyle = '#facc15';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = card.color + '66';
+    ctx.lineWidth = 1;
+    roundRect(ctx, x + 0.5, y + 0.5, cardW - 1, cardH - 1, 10);
     ctx.stroke();
-    ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
-    if (showLabels) {
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 12px monospace';
-      ctx.textAlign = 'center';
-      ctx.save();
-      ctx.scale(-1, 1);
-      ctx.fillText(idx, -x, y - 16);
-      ctx.restore();
-    }
-  }
 
-  if (closestIdx !== hoveredIdx) {
-    hoveredIdx = closestIdx;
-    if (hoveredIdx >= 0) {
-      selectedIdx = hoveredIdx;
-      updateInspector(selectedIdx);
-    }
+    // small download arrow
+    const ix = x + 26, iy = y + cardH / 2;
+    ctx.strokeStyle = card.color;
+    ctx.lineWidth = 1.8;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(ix, iy - 10);
+    ctx.lineTo(ix, iy + 4);
+    ctx.moveTo(ix - 5, iy - 1);
+    ctx.lineTo(ix, iy + 4);
+    ctx.lineTo(ix + 5, iy - 1);
+    ctx.moveTo(ix - 8, iy + 9);
+    ctx.lineTo(ix + 8, iy + 9);
+    ctx.stroke();
+
+    ctx.fillStyle = '#e2e8f0';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.font = '500 17px "SF Mono", "Fira Code", ui-monospace, monospace';
+    ctx.fillText(card.name, x + 48, iy);
+
+    y += cardH + gap;
   }
+  ctx.restore();
 }
 </script>
 </body>

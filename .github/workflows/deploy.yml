@@ -29,6 +29,9 @@ jobs:
         run: |
           find . -name "*.html" -not -path "./.git/*" | xargs sed -i 's/GA_PLACEHOLDER/${{ secrets.GA_ID }}/g'
 
+      - name: Strip test suites from the published site
+        run: rm -rf demos/*/tests
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:

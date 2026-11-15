@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Face Mesh Explorer - test suite</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root { --bg:#0f172a; --surface:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --border:#334155;
+          --pass:#22c55e; --fail:#ef4444; --skip:#f59e0b; --accent:#60a5fa; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+         background: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }
+  h1 { font-size: 1.15rem; margin-bottom: 2px; }
+  p.sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 18px; }
+  .bar { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  button { padding: 8px 18px; border-radius: 6px; border: none; background: var(--accent);
+           color: #06182e; font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+  button:disabled { opacity: 0.5; cursor: progress; }
+  #summary { font-size: 0.9rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .layout { display: grid; grid-template-columns: minmax(0,1fr) 360px; gap: 20px; align-items: start; }
+  ol { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  li { background: var(--surface); border: 1px solid var(--border); border-left-width: 4px;
+       border-radius: 6px; padding: 8px 12px; font-size: 0.85rem; }
+  li.pass { border-left-color: var(--pass); }
+  li.fail { border-left-color: var(--fail); }
+  li.skip { border-left-color: var(--skip); }
+  li.run  { border-left-color: var(--accent); }
+  li .state { font-weight: 700; margin-right: 8px; font-size: 0.72rem; letter-spacing: 0.05em; }
+  li.pass .state { color: var(--pass); }
+  li.fail .state { color: var(--fail); }
+  li.skip .state { color: var(--skip); }
+  li.run .state { color: var(--accent); }
+  li .detail { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 4px;
+               font-family: 'SF Mono', 'Fira Code', ui-monospace, monospace; white-space: pre-wrap; }
+  li.fail .detail { color: #fca5a5; }
+  .stage-wrap { position: sticky; top: 24px; }
+  .stage-wrap h2 { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em;
+                   color: var(--muted); margin-bottom: 6px; }
+  iframe { width: 360px; height: 260px; border: 1px solid var(--border); border-radius: 6px;
+           background: #000; }
+  .note { color: var(--muted); font-size: 0.78rem; margin-top: 10px; }
+  @media (max-width: 860px) { .layout { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <h1>Face Mesh Explorer test suite</h1>
+  <p class="sub">Runs the real demo page in an iframe with the MediaPipe models replaced by fixtures. No webcam, no network (except the last test).</p>
+  <div class="bar">
+    <button id="run">Run tests</button>
+    <span id="summary">not run yet</span>
+  </div>
+  <div class="layout">
+    <ol id="results"></ol>
+    <div class="stage-wrap">
+      <h2>Demo under test</h2>
+      <div id="stage"></div>
+      <p class="note">Keep this tab in the foreground. Browsers throttle background tabs, which makes the animation loop crawl and tests time out.</p>
+    </div>
+  </div>
+
+<script type="module">
+import { FACE_POINTS, HAND_POINTS, DISPLAY_HANDEDNESS } from './stub.mjs';
+
+const DEMO_URL = '../index.html';
+const STUB_URL = new URL('./stub.mjs', location.href).href;
+const resultsEl = document.getElementById('results');
+const summaryEl = document.getElementById('summary');
+const runBtn = document.getElementById('run');
+
+// ---------- assertions ----------
+class Failure extends Error {}
+function assert(cond, msg) { if (!cond) throw new Failure(msg); }
+function eq(actual, expected, msg) {
+  if (actual !== expected) throw new Failure(`${msg}\n  expected: ${expected}\n  actual:   ${actual}`);
+}
+function includes(haystack, needle, msg) {
+  if (!String(haystack).includes(needle)) throw new Failure(`${msg}\n  expected to contain: ${needle}\n  actual: ${haystack}`);
+}
+
+// ---------- harness ----------
+// Boots the untouched demo page with only the MediaPipe import swapped for
+// fixtures, plus a canvas standing in for the webcam.
+async function boot() {
+  // cache-busted: a stale copy would make every test pass against old code
+  const html = await fetch(`${DEMO_URL}?t=${Date.now()}`, { cache: 'no-store' }).then(r => r.text());
+  const patched = html.replace(
+    /from 'https:\/\/cdn\.jsdelivr\.net\/npm\/@mediapipe\/tasks-vision@[^']+\/vision_bundle\.mjs'/,
+    `from '${STUB_URL}'`
+  );
+  assert(patched !== html, 'could not find the MediaPipe import in the demo page');
+
+  const frame = document.createElement('iframe');
+  frame.src = URL.createObjectURL(new Blob([patched], { type: 'text/html' }));
+  document.getElementById('stage').replaceChildren(frame);
+  await new Promise(res => { frame.onload = res; });
+
+  const win = frame.contentWindow;
+  const doc = win.document;
+
+  // Timer-driven frames: rAF stalls whenever the pane or tab is not visible.
+  win.requestAnimationFrame = cb => win.setTimeout(() => cb(win.performance.now()), 16);
+
+  // Fake camera: a plain grey canvas is enough, the fixtures supply landmarks.
+  const cam = doc.createElement('canvas');
+  cam.width = 1280; cam.height = 720;
+  const camCtx = cam.getContext('2d');
+  (function paint() { camCtx.fillStyle = '#223344'; camCtx.fillRect(0, 0, 1280, 720); win.setTimeout(paint, 33); })();
+  win.navigator.mediaDevices.getUserMedia = async () => cam.captureStream(30);
+
+  // Intercept downloads and clipboard writes.
+  const blobs = [];
+  const clipboard = [];
+  const origCreate = win.URL.createObjectURL.bind(win.URL);
+  win.URL.createObjectURL = b => { if (b instanceof win.Blob) blobs.push(b); return origCreate(b); };
+  win.HTMLAnchorElement.prototype.click = function () {};
+  win.navigator.clipboard.writeText = async t => { clipboard.push(t); };
+
+  const ctx = {
+    win, doc, blobs, clipboard,
+    $: id => doc.getElementById(id),
+    all: sel => [...doc.querySelectorAll(sel)],
+
+    async waitFor(fn, msg, timeout = 8000) {
+      const started = Date.now();
+      for (;;) {
+        let value;
+        try { value = fn(); } catch { value = false; }
+        if (value) return value;
+        if (Date.now() - started > timeout) throw new Failure('timed out waiting for: ' + msg);
+        await new Promise(r => setTimeout(r, 50));
+      }
+    },
+    frames(n = 3) { return new Promise(r => setTimeout(r, 90 * n)); },
+
+    async start() {
+      ctx.$('startBtn').click();
+      await ctx.waitFor(() => ctx.$('canvas').width > 0, 'camera to start');
+      await ctx.frames(4);
+    },
+
+    async setCheck(id, value) {
+      const el = ctx.$(id);
+      el.checked = value;
+      el.dispatchEvent(new win.Event('change', { bubbles: true }));
+      await ctx.frames(2);
+    },
+
+    // The demo mirrors the canvas in CSS, so screen x is the inverse of the
+    // landmark x. This is the same maths the page uses, run backwards.
+    pointToClient(p) {
+      const cv = ctx.$('canvas');
+      const rect = cv.getBoundingClientRect();
+      const scale = Math.max(rect.width / cv.width, rect.height / cv.height);
+      const offsetX = (rect.width - cv.width * scale) / 2;
+      const offsetY = (rect.height - cv.height * scale) / 2;
+      return {
+        clientX: rect.left + offsetX + (1 - p.x) * cv.width * scale,
+        clientY: rect.top + offsetY + p.y * cv.height * scale
+      };
+    },
+    async hover(p) {
+      const { clientX, clientY } = ctx.pointToClient(p);
+      ctx.$('canvas').dispatchEvent(new win.MouseEvent('mousemove', { bubbles: true, clientX, clientY }));
+      await ctx.frames(3);
+    },
+    async clickCanvas() {
+      ctx.$('canvas').dispatchEvent(new win.MouseEvent('click', { bubbles: true }));
+      await ctx.frames(2);
+    },
+
+    // Rough colour census of the overlay canvas.
+    sample(canvas) {
+      const cv = canvas || ctx.$('canvas');
+      const copy = doc.createElement('canvas');
+      copy.width = cv.width; copy.height = cv.height;
+      copy.getContext('2d').drawImage(cv, 0, 0);
+      const d = copy.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+      let drawn = 0, hand = 0, yellow = 0, red = 0, alphaSum = 0;
+      for (let i = 0; i < d.length; i += 4 * 7) {
+        const [r, g, b, a] = [d[i], d[i + 1], d[i + 2], d[i + 3]];
+        if (a <= 5) continue;
+        drawn++; alphaSum += a;
+        if (b > 120 && b > g + 15) hand++;
+        if (r > 200 && g > 170 && b < 110) yellow++;
+        if (r > 170 && g < 90 && b < 90) red++;
+      }
+      return { drawn, hand, yellow, red, meanAlpha: drawn ? alphaSum / drawn : 0 };
+    },
+
+    // The iframe's own copy of the fixture module, for changing what the
+    // fake models return mid-test.
+    async stub() {
+      if (!win.__stub) win.__stub = await win.eval(`import('${STUB_URL}')`);
+      return win.__stub;
+    },
+
+    // Records every painting call on the overlay canvas, split into frames at
+    // each clearRect, so a test can assert on draw order.
+    async traceFrame() {
+      const target = ctx.$('canvas');
+      if (!win.__tracing) {
+        win.__tracing = true;
+        win.__frames = [];
+        win.__ops = [];
+        const P = win.CanvasRenderingContext2D.prototype;
+        for (const name of ['clearRect', 'fill', 'stroke', 'fillText', 'strokeText', 'drawImage']) {
+          const orig = P[name];
+          P[name] = function (...args) {
+            if (this.canvas === target) {
+              if (name === 'clearRect') {
+                if (win.__ops.length) win.__frames.push(win.__ops.slice());
+                win.__ops.length = 0;
+              } else {
+                win.__ops.push(name);
+              }
+            }
+            return orig.apply(this, args);
+          };
+        }
+      }
+      win.__frames.length = 0;
+      await ctx.waitFor(() => win.__frames.length >= 2, 'two complete frames');
+      return win.__frames[win.__frames.length - 1];
+    },
+
+    async imageFromBlob(blob) {
+      const bmp = await createImageBitmap(blob);
+      const c = document.createElement('canvas');
+      c.width = bmp.width; c.height = bmp.height;
+      c.getContext('2d').drawImage(bmp, 0, 0);
+      return { width: bmp.width, height: bmp.height, canvas: c };
+    }
+  };
+  return ctx;
+}
+
+// ---------- tests ----------
+const tests = [
+  {
+    name: 'default state is unchanged: face only, no hand tracking',
+    async fn(c) {
+      await c.start();
+      eq(c.$('handsToggle').checked, false, 'hand tracking is off by default');
+      eq(c.$('handRegionWrap').style.display, 'none', 'finger filters are hidden');
+      eq(c.$('meshToggle').checked, true, 'face mesh connections still default to on');
+      eq(c.$('cameraToggle').checked, true, 'camera background still defaults to on');
+      eq(c.sample().hand, 0, 'nothing is drawn in the hand colours');
+      return 'hand model is never requested until you ask for it';
+    }
+  },
+  {
+    name: 'enabling hands loads the model and draws two skeletons',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.frames(4);
+      const px = c.sample();
+      assert(px.hand > 50, `expected hand-coloured pixels, got ${px.hand}`);
+      eq(c.$('handRegionWrap').style.display, 'block', 'finger filters appear');
+      eq(c.all('#handRegionToggles .region-btn').length, 6, 'six finger regions');
+      return `${px.hand} hand-coloured pixels sampled`;
+    }
+  },
+  {
+    name: 'hovering a hand point names it',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.hover(HAND_POINTS[0][8]);
+      await c.waitFor(() => c.$('tooltip').textContent.includes('INDEX_FINGER_TIP'), 'hand tooltip');
+      eq(c.$('infoIndex').textContent, '8', 'inspector index');
+      eq(c.$('infoName').textContent, 'INDEX_FINGER_TIP', 'official MediaPipe name');
+      eq(c.$('infoNameRow').style.display, 'block', 'name row is shown for hand points');
+      includes(c.$('infoRegion').textContent, 'Index', 'region is the index finger');
+      includes(c.$('infoRegion').textContent, DISPLAY_HANDEDNESS[0], 'handedness is flipped for display');
+      return c.$('tooltip').textContent;
+    }
+  },
+  {
+    name: 'hovering a face point still behaves exactly as before',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.hover(FACE_POINTS[0]);
+      await c.waitFor(() => c.$('tooltip').textContent.startsWith('#0 ('), 'face tooltip');
+      eq(c.$('infoIndex').textContent, '0', 'inspector index');
+      eq(c.$('infoNameRow').style.display, 'none', 'no MediaPipe name row for face points');
+      return c.$('tooltip').textContent;
+    }
+  },
+  {
+    name: 'clicking pins hand points, and copy stays an array for face-only',
+    async fn(c) {
+      await c.start();
+      await c.hover(FACE_POINTS[0]);
+      await c.clickCanvas();
+      await c.waitFor(() => c.$('copySelected').textContent === 'Copy indices (1)', 'one pin');
+      c.$('copySelected').click();
+      await c.waitFor(() => c.clipboard.length === 1, 'clipboard write');
+      eq(c.clipboard[0], '[0]', 'face-only copy format is unchanged');
+      return c.clipboard[0];
+    }
+  },
+  {
+    name: 'mixed pins copy as JSON keyed by hand',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.hover(FACE_POINTS[0]);
+      await c.clickCanvas();
+      await c.hover(HAND_POINTS[0][4]);
+      await c.waitFor(() => c.$('tooltip').textContent.includes('THUMB_TIP'), 'thumb tooltip');
+      await c.clickCanvas();
+      await c.waitFor(() => c.$('copySelected').textContent === 'Copy indices (2)', 'two pins');
+      c.$('copySelected').click();
+      await c.waitFor(() => c.clipboard.length === 1, 'clipboard write');
+      const parsed = JSON.parse(c.clipboard[0]);
+      eq(JSON.stringify(parsed.face), '[0]', 'face indices');
+      eq(JSON.stringify(parsed.hands[DISPLAY_HANDEDNESS[0]]), '[4]', 'hand indices keyed by hand');
+      eq(c.all('#pinnedList .pinned-item').length, 2, 'both pins listed');
+      return c.clipboard[0];
+    }
+  },
+  {
+    name: 'a finger filter dims the other points instead of hiding them',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.setCheck('faceToggle', false);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.frames(4);
+      const before = c.sample();
+      c.all('#handRegionToggles .region-btn').find(b => b.textContent === 'Thumb').click();
+      await c.frames(5);
+      const after = c.sample();
+      assert(after.meanAlpha < before.meanAlpha * 0.8,
+        `expected dimming, mean alpha went ${before.meanAlpha.toFixed(1)} -> ${after.meanAlpha.toFixed(1)}`);
+      assert(after.drawn > before.drawn * 0.7,
+        'the skeleton should stay visible, not disappear');
+      includes(c.$('selectRegionBtn').textContent, 'Thumb hand points', 'select button covers hands');
+      return `mean alpha ${before.meanAlpha.toFixed(1)} -> ${after.meanAlpha.toFixed(1)}`;
+    }
+  },
+  {
+    name: 'hands leaving the frame leave no stale skeleton',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.frames(4);
+      assert(c.sample().hand > 50, 'skeletons are drawn to begin with');
+      const stub = await c.stub();
+      stub.HandLandmarker.returnNoHands = true;      // both hands leave the frame
+      await c.waitFor(() => c.sample().hand === 0, 'skeletons to clear');
+      stub.HandLandmarker.returnNoHands = false;
+      await c.waitFor(() => c.sample().hand > 50, 'skeletons to come back');
+      return 'cleared and recovered';
+    }
+  },
+  {
+    name: 'capture exports a real 1200 x 630 PNG with no interface in it',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.setCheck('cameraToggle', false);
+      // pin and hover something: neither may appear in the export
+      await c.hover(HAND_POINTS[0][8]);
+      await c.clickCanvas();
+      assert(c.sample().yellow > 0, 'the live canvas does show the pin marker');
+
+      c.$('captureBtn').click();
+      await c.waitFor(() => c.$('countdown').classList.contains('visible'), 'countdown to appear');
+      eq(c.$('countdown').querySelector('span').textContent, '3', 'countdown starts at 3');
+      const blob = await c.waitFor(() => c.blobs[0], 'exported PNG', 9000);
+      eq(blob.type, 'image/png', 'export is a PNG');
+      const img = await c.imageFromBlob(blob);
+      eq(img.width, 1200, 'export width');
+      eq(img.height, 630, 'export height');
+      const px = c.sample(img.canvas);
+      eq(px.yellow, 0, 'no hover or pin markers in the export');
+      assert(px.hand > 20, 'the hand skeleton is in the export');
+      eq(c.$('countdown').classList.contains('visible'), false, 'countdown cleared itself');
+      return `${img.width} x ${img.height}, ${(blob.size / 1024).toFixed(0)} KB`;
+    }
+  },
+  {
+    name: 'capture can include labels when you ask for them',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.setCheck('cameraToggle', false);
+      await c.setCheck('captureLabelsToggle', true);
+      await c.hover(HAND_POINTS[0][8]);
+      await c.clickCanvas();                      // pin it, so the marker survives
+      await c.waitFor(() => c.$('copySelected').textContent === 'Copy indices (1)', 'one pin');
+
+      c.$('captureBtn').click();
+      const blob = await c.waitFor(() => c.blobs[0], 'exported PNG', 9000);
+      const img = await c.imageFromBlob(blob);
+      eq(img.width, 1200, 'export width');
+      const px = c.sample(img.canvas);
+      assert(px.yellow > 0, 'the pinned marker and its label are in the export');
+      return `${px.yellow} marker pixels sampled in the export`;
+    }
+  },
+  {
+    name: 'pressing C captures without moving the mouse',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.setCheck('captureLabelsToggle', true);
+      await c.hover(HAND_POINTS[0][8]);
+      await c.waitFor(() => c.$('tooltip').textContent.includes('INDEX_FINGER_TIP'), 'hand tooltip');
+
+      c.doc.dispatchEvent(new c.win.KeyboardEvent('keydown', { key: 'c', bubbles: true }));
+      await c.waitFor(() => c.$('countdown').classList.contains('visible'), 'countdown from the keyboard');
+      const blob = await c.waitFor(() => c.blobs[0], 'exported PNG', 9000);
+      const img = await c.imageFromBlob(blob);
+      const px = c.sample(img.canvas);
+      // the cursor never left the canvas, so the hovered point is still marked
+      assert(px.yellow > 0, 'the hovered point is marked in the export');
+      includes(c.$('tooltip').textContent, 'INDEX_FINGER_TIP', 'still hovering the same point');
+      return 'hover survived the capture';
+    }
+  },
+  {
+    name: 'finger colours can be themed',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.setCheck('faceToggle', false);
+      await c.frames(4);
+      eq(c.sample().red, 0, 'nothing is red to begin with');
+
+      const swatches = c.all('#handThemeGrid input[type="color"]');
+      eq(swatches.length, 6, 'one colour swatch per finger region');
+      for (const input of swatches) {
+        input.value = '#ff0000';
+        input.dispatchEvent(new c.win.Event('input', { bubbles: true }));
+      }
+      await c.frames(5);
+      assert(c.sample().red > 30, 'the skeleton follows the new colours');
+
+      c.$('themeReset').click();
+      await c.frames(5);
+      eq(c.sample().red, 0, 'reset restores the default palette');
+      return 'six swatches, applied live and reset';
+    }
+  },
+  {
+    name: 'wireframe mode exports labels too',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.setCheck('captureLabelsToggle', true);
+      await c.setCheck('wireframeToggle', true);          // camera and header hidden
+      await c.hover(HAND_POINTS[0][8]);
+      await c.waitFor(() => c.$('tooltip').textContent.includes('INDEX_FINGER_TIP'), 'hand tooltip');
+      // reaching for the button takes the cursor off the canvas: the point you
+      // lined up must still be marked when the shot fires
+      c.$('canvas').dispatchEvent(new c.win.MouseEvent('mouseleave', { bubbles: true }));
+      await c.frames(2);
+      c.$('captureBtn').click();
+      const blob = await c.waitFor(() => c.blobs[0], 'exported PNG', 9000);
+      const img = await c.imageFromBlob(blob);
+      const px = c.sample(img.canvas);
+      assert(px.yellow > 0, 'the hovered marker and label are in the wireframe export');
+      return `${px.yellow} marker pixels in the wireframe export`;
+    }
+  },
+  {
+    name: 'labels are painted last, so nothing covers them',
+    async fn(c) {
+      await c.start();
+      await c.setCheck('handsToggle', true);
+      await c.waitFor(() => c.$('handStatus').textContent.includes('ready'), 'hand model to load');
+      await c.hover(HAND_POINTS[0][8]);
+      await c.waitFor(() => c.$('tooltip').textContent.includes('INDEX_FINGER_TIP'), 'hand tooltip');
+
+      const frame = await c.traceFrame();
+      const last = frame[frame.length - 1];
+      eq(last, 'fillText', 'the last thing painted in a frame is a label');
+      const lastLabel = frame.lastIndexOf('fillText');
+      const lastStroke = frame.lastIndexOf('stroke');
+      const lastFill = frame.lastIndexOf('fill');
+      assert(lastLabel > lastStroke, `a line was drawn after the label (label at ${lastLabel}, stroke at ${lastStroke})`);
+      assert(lastLabel > lastFill, `a dot was drawn after the label (label at ${lastLabel}, fill at ${lastFill})`);
+      return `${frame.length} paint calls, label last`;
+    }
+  },
+  {
+    name: 'real MediaPipe hand topology is 21 connections (needs network)',
+    async fn() {
+      let mod;
+      try {
+        mod = await import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs');
+      } catch {
+        return { skip: 'CDN unreachable, skipped' };
+      }
+      const conns = mod.HandLandmarker.HAND_CONNECTIONS;
+      eq(conns.length, 21, 'official hand connection count');
+      assert(conns.every(k => Number.isInteger(k.start) && Number.isInteger(k.end)), 'connections are {start, end}');
+      const touched = new Set(conns.flatMap(k => [k.start, k.end]));
+      eq(touched.size, 21, 'every one of the 21 landmarks is connected');
+      return '21 connections over 21 landmarks';
+    }
+  }
+];
+
+// ---------- runner ----------
+async function run() {
+  runBtn.disabled = true;
+  resultsEl.replaceChildren();
+  let passed = 0, failed = 0, skipped = 0;
+  const started = Date.now();
+
+  for (const test of tests) {
+    const li = document.createElement('li');
+    li.className = 'run';
+    li.innerHTML = `<span class="state">RUN</span>${test.name}`;
+    resultsEl.appendChild(li);
+
+    let ctx = null;
+    try {
+      ctx = test.fn.length > 0 ? await boot() : null;
+      const out = await test.fn(ctx);
+      if (out && out.skip) {
+        skipped++;
+        li.className = 'skip';
+        li.innerHTML = `<span class="state">SKIP</span>${test.name}<span class="detail">${out.skip}</span>`;
+      } else {
+        passed++;
+        li.className = 'pass';
+        li.innerHTML = `<span class="state">PASS</span>${test.name}` + (out ? `<span class="detail">${out}</span>` : '');
+      }
+    } catch (err) {
+      failed++;
+      li.className = 'fail';
+      const detail = err instanceof Failure ? err.message : (err && err.stack) || String(err);
+      li.innerHTML = `<span class="state">FAIL</span>${test.name}<span class="detail"></span>`;
+      li.querySelector('.detail').textContent = detail;
+    }
+    summaryEl.textContent = `${passed} passed, ${failed} failed, ${skipped} skipped`;
+  }
+
+  const secs = ((Date.now() - started) / 1000).toFixed(1);
+  summaryEl.textContent = `${passed} passed, ${failed} failed, ${skipped} skipped in ${secs}s`;
+  summaryEl.style.color = failed ? 'var(--fail)' : 'var(--pass)';
+  runBtn.disabled = false;
+  window.__testResults = { passed, failed, skipped };
+}
+
+runBtn.addEventListener('click', run);
+run();
+</script>
+</body>
+</html>

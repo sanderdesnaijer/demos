@@ -16,14 +16,15 @@ No framework, no build step, no CMS. Just HTML, CSS and vanilla JavaScript deplo
 
 ## Demos
 
-### Face Mesh Landmark Explorer
+### Face Mesh & Hand Landmark Explorer
 
-Interactive reference for all 478 MediaPipe Face Mesh landmark indices. Hover over any point on your face to see its index, filter by region (eyes, mouth, nose, eyebrows, jaw, cheeks, forehead, iris), and copy coordinates to your clipboard. Built as a companion tool for the [Face Mesh Landmark Guide](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks).
+Interactive reference for all 478 MediaPipe face landmark indices, and for both hands at 21 landmarks each. Hover any point to see its index, its region and, for hands, its official MediaPipe name such as `INDEX_FINGER_TIP`. Filter by face region (eyes, mouth, nose, eyebrows, jaw, cheeks, forehead, iris) or by finger, pin points, and copy indices to your clipboard. A wireframe mode and a 1200 x 630 PNG export are there for generating article images. Built as a companion tool for the [Face Mesh Landmark Guide](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks).
 
 - **Demo:** [demos.sanderdesnaijer.com/demos/face-mesh-explorer/](https://demos.sanderdesnaijer.com/demos/face-mesh-explorer/)
 - **Guide:** [sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks](https://sanderdesnaijer.com/blog/mediapipe-face-mesh-landmarks)
 - **Project:** [sanderdesnaijer.com/projects/mediapipe-face-landmark-explorer](https://www.sanderdesnaijer.com/projects/mediapipe-face-landmark-explorer)
-- **Stack:** MediaPipe FaceLandmarker, HTML Canvas, Vanilla JavaScript, Webcam
+- **Stack:** MediaPipe FaceLandmarker and HandLandmarker, HTML Canvas, Vanilla JavaScript, Webcam
+- **Tests:** open `demos/face-mesh-explorer/tests/` on a local server, see its [README](demos/face-mesh-explorer/tests/README.md)
 
 ### Map Gesture Controls
 
@@ -70,7 +71,8 @@ Duck Hunt with hand tracking. Your webcam hand replaces the lightgun.
 ├── img/                    # shared images and og images
 └── demos/
     ├── face-mesh-explorer/
-    │   └── index.html      # interactive landmark explorer
+    │   ├── index.html      # interactive landmark explorer
+    │   └── tests/          # browser test suite, not deployed
     └── mediapipe-rainbow/
         └── index.html      # rainbow hand tracking demo
 ```
